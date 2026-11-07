@@ -1,0 +1,1083 @@
+{
+ "K01_gst_certificate.png:f30b5b4eca3069db": {
+  "fields": {
+   "address": "Shop/Unit 1, Tech Park Road, Visakhapatnam, Andhra Pradesh - 118383",
+   "registration_type": "Regular",
+   "date_of_liability": "2025-06-07",
+   "constitution": "Proprietorship",
+   "legal_name": "Neha Kaur (Prop. Vindhya Tours & Travels)",
+   "trade_name": "Vindhya Tours & Travels",
+   "gstin": "37IHKXV5167L1ZS"
+  },
+  "confidence": {
+   "address": 0.888,
+   "registration_type": 0.854,
+   "date_of_liability": 0.869,
+   "constitution": 0.858,
+   "legal_name": 0.869,
+   "trade_name": 0.841,
+   "gstin": 0.792
+  },
+  "engine": "rapidocr",
+  "quality": {
+   "blur": 1267.4,
+   "readable": true
+  }
+ },
+ "K01_udyam_certificate.png:abe10634040d7d4b": {
+  "fields": {
+   "udyam_number": "",
+   "date_of_registration": "2024-03-24",
+   "enterprise_name": "Vindhya Tours & Travels",
+   "major_activity": "Services",
+   "state": "Andhra Pradesh",
+   "city": "Visakhapatnam"
+  },
+  "confidence": {
+   "udyam_number": 0.0,
+   "date_of_registration": 0.866,
+   "enterprise_name": 0.87,
+   "major_activity": 0.822,
+   "state": 0.833,
+   "city": 0.826
+  },
+  "engine": "rapidocr",
+  "quality": {
+   "blur": 943.1,
+   "readable": true
+  }
+ },
+ "K01_address_proof.png:fc2e7e233d68ecb6": {
+  "fields": {
+   "amount_due": "27071",
+   "supply_address": "Shop/Unit 1, Tech Park Road, Visakhapatnam, Andhra Pradesh - 118383",
+   "units": "2203",
+   "consumer_no": "9485717625",
+   "billed_to": "Vindhya Tours & Travels",
+   "bill_date": "2026-06-26"
+  },
+  "confidence": {
+   "amount_due": 0.78,
+   "supply_address": 0.879,
+   "units": 0.789,
+   "consumer_no": 0.88,
+   "billed_to": 0.871,
+   "bill_date": 0.828
+  },
+  "engine": "rapidocr",
+  "quality": {
+   "blur": 1023.4,
+   "readable": true
+  }
+ },
+ "K01_signatory_id.png:5f12a98907119f5d": {
+  "fields": {
+   "for_business": "Vindhya Tours & Travels",
+   "designation": "Office admin",
+   "valid_till": "2028-03-26",
+   "id_no": "SYN-ID-346190",
+   "name": "Neha Kaur"
+  },
+  "confidence": {
+   "for_business": 0.908,
+   "designation": 0.89,
+   "valid_till": 0.843,
+   "id_no": 0.905,
+   "name": 0.839
+  },
+  "engine": "rapidocr",
+  "quality": {
+   "blur": 1852.2,
+   "readable": true
+  }
+ },
+ "K02_gst_certificate.png:1d86666687927981": {
+  "fields": {
+   "address": "Shop/lUnit 199, Station Road, Koikata, West Bengai - 347550",
+   "registration_type": "Regular",
+   "date_of_liability": "2022-04-17",
+   "constitution": "Proprietorship",
+   "legal_name": "Joseph Shah (Prop. Harmony Dental Care)",
+   "trade_name": "Harmony Dentai Care",
+   "gstin": "19EOGXH4115Y1ZL"
+  },
+  "confidence": {
+   "address": 0.878,
+   "registration_type": 0.853,
+   "date_of_liability": 0.835,
+   "constitution": 0.877,
+   "legal_name": 0.903,
+   "trade_name": 0.849,
+   "gstin": 0.793
+  },
+  "engine": "rapidocr",
+  "quality": {
+   "blur": 1255.7,
+   "readable": true
+  }
+ },
+ "K02_udyam_certificate.png:81f5406c274d8de5": {
+  "fields": {
+   "udyam_number": "UDYAM-WB-00-5053330",
+   "date_of_registration": "2023-01-11",
+   "enterprise_name": "Harmony Dental Care",
+   "major_activity": "Services",
+   "state": "West Bengal",
+   "city": "Kolkata"
+  },
+  "confidence": {
+   "udyam_number": 0.866,
+   "date_of_registration": 0.836,
+   "enterprise_name": 0.86,
+   "major_activity": 0.814,
+   "state": 0.77,
+   "city": 0.827
+  },
+  "engine": "rapidocr",
+  "quality": {
+   "blur": 970.4,
+   "readable": true
+  }
+ },
+ "K02_address_proof.png:087d0626f76cea87": {
+  "fields": {
+   "amount_due": "7077",
+   "supply_address": "Shop/Unit 199, Station Road, Kolkata, West Bengal - 347550",
+   "units": "992",
+   "consumer_no": "9790713533",
+   "billed_to": "Harmony Dental Care",
+   "bill_date": "2026-05-22"
+  },
+  "confidence": {
+   "amount_due": 0.843,
+   "supply_address": 0.87,
+   "units": 0.718,
+   "consumer_no": 0.863,
+   "billed_to": 0.858,
+   "bill_date": 0.83
+  },
+  "engine": "rapidocr",
+  "quality": {
+   "blur": 988.1,
+   "readable": true
+  }
+ },
+ "K02_signatory_id.png:e6d1251036a5aec2": {
+  "fields": {
+   "for_business": "Harmony Dental Care",
+   "designation": "Manager",
+   "valid_till": "2028-09-10",
+   "id_no": "SYN-ID-816907",
+   "name": "Joseph Shah"
+  },
+  "confidence": {
+   "for_business": 0.868,
+   "designation": 0.802,
+   "valid_till": 0.849,
+   "id_no": 0.88,
+   "name": 0.909
+  },
+  "engine": "rapidocr",
+  "quality": {
+   "blur": 1813.2,
+   "readable": true
+  }
+ },
+ "K03_gst_certificate.png:4e41f486c166d0fe": {
+  "fields": {
+   "address": "Shop/Unit 8o, Civil Lines, Nagpur, Maharashtra - 411231",
+   "registration_type": "Regular",
+   "date_of_liability": "2020-02-10",
+   "constitution": "Proprietorship",
+   "legal_name": "Joseph Singh (Prop. Ganesh Woodcraft)",
+   "trade_name": "Ganesh Woodcraft",
+   "gstin": "27XUIXG0767D1ZP"
+  },
+  "confidence": {
+   "address": 0.87,
+   "registration_type": 0.842,
+   "date_of_liability": 0.845,
+   "constitution": 0.781,
+   "legal_name": 0.85,
+   "trade_name": 0.861,
+   "gstin": 0.804
+  },
+  "engine": "rapidocr",
+  "quality": {
+   "blur": 1221.3,
+   "readable": true
+  }
+ },
+ "K03_udyam_certificate.png:619440964425c580": {
+  "fields": {
+   "udyam_number": "UDYAM-MH-00-9516696",
+   "date_of_registration": "2024-11-21",
+   "enterprise_name": "Ganesh Woodcraft",
+   "major_activity": "Manufacturing",
+   "state": "Maharashtra",
+   "city": "Nagpur"
+  },
+  "confidence": {
+   "udyam_number": 0.887,
+   "date_of_registration": 0.802,
+   "enterprise_name": 0.879,
+   "major_activity": 0.882,
+   "state": 0.83,
+   "city": 0.779
+  },
+  "engine": "rapidocr",
+  "quality": {
+   "blur": 980.5,
+   "readable": true
+  }
+ },
+ "K03_address_proof.png:88c0f3d6113240bd": {
+  "fields": {
+   "amount_due": "33615",
+   "supply_address": "Shop/Unit 8o, Civil Lines, Nagpur, Maharashtra - 411231",
+   "units": "231",
+   "consumer_no": "3438517928",
+   "billed_to": "Ganesh Woodcraft",
+   "bill_date": "2026-05-30"
+  },
+  "confidence": {
+   "amount_due": 0.828,
+   "supply_address": 0.876,
+   "units": 0.766,
+   "consumer_no": 0.875,
+   "billed_to": 0.849,
+   "bill_date": 0.83
+  },
+  "engine": "rapidocr",
+  "quality": {
+   "blur": 973.4,
+   "readable": true
+  }
+ },
+ "K03_signatory_id.png:d5d8a2684764d588": {
+  "fields": {
+   "for_business": "Ganesh Woodcraft",
+   "designation": "Owner",
+   "valid_till": "2028-07-04",
+   "id_no": "SYN-ID-447889",
+   "name": "Joseph Singh"
+  },
+  "confidence": {
+   "for_business": 0.835,
+   "designation": 0.77,
+   "valid_till": 0.85,
+   "id_no": 0.86,
+   "name": 0.887
+  },
+  "engine": "rapidocr",
+  "quality": {
+   "blur": 1785.5,
+   "readable": true
+  }
+ },
+ "K04_gst_certificate.png:d65d3c966aed745a": {
+  "fields": {
+   "address": "",
+   "registration_type": "",
+   "date_of_liability": "",
+   "constitution": "",
+   "legal_name": "",
+   "trade_name": "",
+   "gstin": ""
+  },
+  "confidence": {
+   "address": 0.0,
+   "registration_type": 0.0,
+   "date_of_liability": 0.0,
+   "constitution": 0.0,
+   "legal_name": 0.0,
+   "trade_name": 0.0,
+   "gstin": 0.0
+  },
+  "engine": "rapidocr",
+  "quality": {
+   "blur": 1.0,
+   "readable": false
+  }
+ },
+ "K04_udyam_certificate.png:02522751a7e096bc": {
+  "fields": {
+   "udyam_number": "UDYAM-MH-00-6131836",
+   "date_of_registration": "2025-05-17",
+   "enterprise_name": "Saffron Dental Care LLP",
+   "major_activity": "Services",
+   "state": "Maharashtra",
+   "city": "Nagpur"
+  },
+  "confidence": {
+   "udyam_number": 0.894,
+   "date_of_registration": 0.817,
+   "enterprise_name": 0.892,
+   "major_activity": 0.812,
+   "state": 0.83,
+   "city": 0.779
+  },
+  "engine": "rapidocr",
+  "quality": {
+   "blur": 972.2,
+   "readable": true
+  }
+ },
+ "K04_address_proof.png:38000bc5e1b78105": {
+  "fields": {
+   "amount_due": "20713",
+   "supply_address": "Shop/Unit 75, Lake View Colony, Nagpur, Maharashtra - 137452",
+   "units": "2295",
+   "consumer_no": "7397844759",
+   "billed_to": "Saffron Dental Care LLP",
+   "bill_date": "2026-05-28"
+  },
+  "confidence": {
+   "amount_due": 0.782,
+   "supply_address": 0.869,
+   "units": 0.751,
+   "consumer_no": 0.85,
+   "billed_to": 0.848,
+   "bill_date": 0.869
+  },
+  "engine": "rapidocr",
+  "quality": {
+   "blur": 1004.9,
+   "readable": true
+  }
+ },
+ "K04_signatory_id.png:91e94e630050e47e": {
+  "fields": {
+   "for_business": "Saffron Dental Care LLP",
+   "designation": "Partner",
+   "valid_till": "2028-08-03",
+   "id_no": "SYN-ID-609396",
+   "name": "Fatima Pillai"
+  },
+  "confidence": {
+   "for_business": 0.904,
+   "designation": 0.798,
+   "valid_till": 0.844,
+   "id_no": 0.872,
+   "name": 0.842
+  },
+  "engine": "rapidocr",
+  "quality": {
+   "blur": 1825.2,
+   "readable": true
+  }
+ },
+ "K05_gst_certificate.png:39551a5031ba4ae8": {
+  "fields": {
+   "address": "Shop/Unit 38, Civil Lines, Kochi, Kerala - 75 2083",
+   "registration_type": "Regular",
+   "date_of_liability": "2020-07-26",
+   "constitution": "Limited Liability Partnership",
+   "legal_name": "Balaji Realty LLP",
+   "trade_name": "Balaji Realty LLP",
+   "gstin": "32TZAXB5481U1Z1"
+  },
+  "confidence": {
+   "address": 0.855,
+   "registration_type": 0.852,
+   "date_of_liability": 0.84,
+   "constitution": 0.87,
+   "legal_name": 0.83,
+   "trade_name": 0.803,
+   "gstin": 0.833
+  },
+  "engine": "rapidocr",
+  "quality": {
+   "blur": 1178.2,
+   "readable": true
+  }
+ },
+ "K05_address_proof.png:f02c19643334f34c": {
+  "fields": {
+   "amount_due": "22425",
+   "supply_address": "Shop/Unit 38, Civil Lines, Kochi, Kerala - 75 2083",
+   "units": "996",
+   "consumer_no": "4294969054",
+   "billed_to": "Balaji Realty LLP",
+   "bill_date": "2026-06-11"
+  },
+  "confidence": {
+   "amount_due": 0.842,
+   "supply_address": 0.865,
+   "units": 0.767,
+   "consumer_no": 0.863,
+   "billed_to": 0.864,
+   "bill_date": 0.812
+  },
+  "engine": "rapidocr",
+  "quality": {
+   "blur": 952.5,
+   "readable": true
+  }
+ },
+ "K05_signatory_id.png:6c0020e20e7badcc": {
+  "fields": {
+   "for_business": "Balaji Realty LLP",
+   "designation": "Owner",
+   "valid_till": "2029-09-11",
+   "id_no": "SYN-ID-587234",
+   "name": "Anita Shah"
+  },
+  "confidence": {
+   "for_business": 0.845,
+   "designation": 0.77,
+   "valid_till": 0.817,
+   "id_no": 0.835,
+   "name": 0.826
+  },
+  "engine": "rapidocr",
+  "quality": {
+   "blur": 1759.6,
+   "readable": true
+  }
+ },
+ "K06_gst_certificate.png:1364d92a676f59c6": {
+  "fields": {
+   "address": "Shop/Unit 71, Market Yard, Jaipur, Rajasthan - 194057",
+   "registration_type": "Regular",
+   "date_of_liability": "2019-09-25",
+   "constitution": "Proprietorship",
+   "legal_name": "Pooja Shah (Prop. Saffron Unisex Salon)",
+   "trade_name": "Saffron Unisex Salon",
+   "gstin": "08YKZXS8189L1Z0"
+  },
+  "confidence": {
+   "address": 0.855,
+   "registration_type": 0.853,
+   "date_of_liability": 0.831,
+   "constitution": 0.855,
+   "legal_name": 0.846,
+   "trade_name": 0.84,
+   "gstin": 0.832
+  },
+  "engine": "rapidocr",
+  "quality": {
+   "blur": 1221.6,
+   "readable": true
+  }
+ },
+ "K06_udyam_certificate.png:1063764bfeb9843c": {
+  "fields": {
+   "udyam_number": "UDYAM-RJ-00-6577157",
+   "date_of_registration": "2023-01-24",
+   "enterprise_name": "Saffron Unisex Salon",
+   "major_activity": "Services",
+   "state": "Rajasthan",
+   "city": "Jaipur"
+  },
+  "confidence": {
+   "udyam_number": 0.897,
+   "date_of_registration": 0.853,
+   "enterprise_name": 0.876,
+   "major_activity": 0.814,
+   "state": 0.823,
+   "city": 0.802
+  },
+  "engine": "rapidocr",
+  "quality": {
+   "blur": 951.4,
+   "readable": true
+  }
+ },
+ "K06_address_proof.png:012f0ae7ae8751ad": {
+  "fields": {
+   "amount_due": "27352",
+   "supply_address": "Shop/Unit 71, Market Yard, Jaipur, Rajasthan -194057",
+   "units": "1280",
+   "consumer_no": "9566781101",
+   "billed_to": "Saffron Unisex Salon",
+   "bill_date": "2026-06-11"
+  },
+  "confidence": {
+   "amount_due": 0.776,
+   "supply_address": 0.864,
+   "units": 0.791,
+   "consumer_no": 0.85,
+   "billed_to": 0.871,
+   "bill_date": 0.842
+  },
+  "engine": "rapidocr",
+  "quality": {
+   "blur": 976.0,
+   "readable": true
+  }
+ },
+ "K06_signatory_id.png:3187c6c19d9a19fb": {
+  "fields": {
+   "for_business": "Saffron Unisex Salon",
+   "designation": "Owner",
+   "valid_till": "2028-09-15",
+   "id_no": "SYN-ID-118354",
+   "name": "Pooja Shah"
+  },
+  "confidence": {
+   "for_business": 0.866,
+   "designation": 0.768,
+   "valid_till": 0.85,
+   "id_no": 0.833,
+   "name": 0.82
+  },
+  "engine": "rapidocr",
+  "quality": {
+   "blur": 1788.0,
+   "readable": true
+  }
+ },
+ "K07_gst_certificate.png:261f470ecf7ef233": {
+  "fields": {
+   "address": "Shop/Unit 52, Transport Nagar, Delhi, Delhi -334596",
+   "registration_type": "Regular",
+   "date_of_liability": "2024-01-13",
+   "constitution": "Proprietorship",
+   "legal_name": "Neha Banerjee (Prop. Shri Physio Clinic)",
+   "trade_name": "Neelgiri Physio Clinic",
+   "gstin": "07CPCXN0398P1ZT"
+  },
+  "confidence": {
+   "address": 0.862,
+   "registration_type": 0.854,
+   "date_of_liability": 0.853,
+   "constitution": 0.838,
+   "legal_name": 0.863,
+   "trade_name": 0.839,
+   "gstin": 0.809
+  },
+  "engine": "rapidocr",
+  "quality": {
+   "blur": 1215.2,
+   "readable": true
+  }
+ },
+ "K07_udyam_certificate.png:f3c289913441e8e9": {
+  "fields": {
+   "udyam_number": "UDYAM-DL-00-9565547",
+   "date_of_registration": "2024-07-14",
+   "enterprise_name": "Neelgiri Physio Clinic",
+   "major_activity": "Services",
+   "state": "Delhi",
+   "city": "Delhi"
+  },
+  "confidence": {
+   "udyam_number": 0.888,
+   "date_of_registration": 0.858,
+   "enterprise_name": 0.879,
+   "major_activity": 0.839,
+   "state": 0.767,
+   "city": 0.742
+  },
+  "engine": "rapidocr",
+  "quality": {
+   "blur": 937.1,
+   "readable": true
+  }
+ },
+ "K07_address_proof.png:7fe2c84aba606a2a": {
+  "fields": {
+   "amount_due": "10690",
+   "supply_address": "Shop/Unit 52, Transport Nagar, Delhi, Delhi -334596",
+   "units": "1652",
+   "consumer_no": "7545812405",
+   "billed_to": "Neelgiri Physio Clinic",
+   "bill_date": "2026-07-05"
+  },
+  "confidence": {
+   "amount_due": 0.827,
+   "supply_address": 0.834,
+   "units": 0.791,
+   "consumer_no": 0.829,
+   "billed_to": 0.878,
+   "bill_date": 0.839
+  },
+  "engine": "rapidocr",
+  "quality": {
+   "blur": 973.4,
+   "readable": true
+  }
+ },
+ "K07_signatory_id.png:d1b2add7452522b5": {
+  "fields": {
+   "for_business": "Neelgiri Physio Clinic",
+   "designation": "Manager",
+   "valid_till": "2030-05-05",
+   "id_no": "SYN-ID-178237",
+   "name": "Neha Banerjee"
+  },
+  "confidence": {
+   "for_business": 0.923,
+   "designation": 0.803,
+   "valid_till": 0.866,
+   "id_no": 0.902,
+   "name": 0.878
+  },
+  "engine": "rapidocr",
+  "quality": {
+   "blur": 1852.2,
+   "readable": true
+  }
+ },
+ "K08_gst_certificate.png:6b3d66c7f107b758": {
+  "fields": {
+   "address": "Shop/Unit 238, Ring Road, Vadodara, Gujarat -348176",
+   "registration_type": "Regular",
+   "date_of_liability": "2018-12-01",
+   "constitution": "Proprietorship",
+   "legal_name": "Joseph Rao (Prop. Green Leaf Legal Associates)",
+   "trade_name": "Green Leaf Legal Associates",
+   "gstin": "24XORXG9365M1Z3"
+  },
+  "confidence": {
+   "address": 0.847,
+   "registration_type": 0.854,
+   "date_of_liability": 0.826,
+   "constitution": 0.855,
+   "legal_name": 0.83,
+   "trade_name": 0.834,
+   "gstin": 0.796
+  },
+  "engine": "rapidocr",
+  "quality": {
+   "blur": 1270.6,
+   "readable": true
+  }
+ },
+ "K08_udyam_certificate.png:ac959a6ab58749a3": {
+  "fields": {
+   "udyam_number": "UDYAM-GJ-00-8477445",
+   "date_of_registration": "2022-11-12",
+   "enterprise_name": "Green Leaf Legal Associates",
+   "major_activity": "Services",
+   "state": "Gujarat",
+   "city": "Vadodara"
+  },
+  "confidence": {
+   "udyam_number": 0.903,
+   "date_of_registration": 0.861,
+   "enterprise_name": 0.889,
+   "major_activity": 0.814,
+   "state": 0.826,
+   "city": 0.804
+  },
+  "engine": "rapidocr",
+  "quality": {
+   "blur": 979.0,
+   "readable": true
+  }
+ },
+ "K08_address_proof.png:47cd90e1c0f3842c": {
+  "fields": {
+   "amount_due": "33859",
+   "supply_address": "Shop/Unit 238, Ring Road, Vadodara, Gujarat -348176",
+   "units": "2219",
+   "consumer_no": "2568472785",
+   "billed_to": "Green Leaf Legal Associates",
+   "bill_date": "2026-05-26"
+  },
+  "confidence": {
+   "amount_due": 0.851,
+   "supply_address": 0.828,
+   "units": 0.789,
+   "consumer_no": 0.871,
+   "billed_to": 0.891,
+   "bill_date": 0.842
+  },
+  "engine": "rapidocr",
+  "quality": {
+   "blur": 1006.3,
+   "readable": true
+  }
+ },
+ "K08_signatory_id.png:9040d41d65a9ba42": {
+  "fields": {
+   "for_business": "Green Leaf Legal Associates",
+   "designation": "Office admin",
+   "valid_till": "2027-09-18",
+   "id_no": "SYN-ID-393148",
+   "name": "Joseph Rao"
+  },
+  "confidence": {
+   "for_business": 0.869,
+   "designation": 0.89,
+   "valid_till": 0.79,
+   "id_no": 0.889,
+   "name": 0.903
+  },
+  "engine": "rapidocr",
+  "quality": {
+   "blur": 1899.9,
+   "readable": true
+  }
+ },
+ "K09_gst_certificate.png:200ff261394fbce9": {
+  "fields": {
+   "address": "Shop/Unit 217, Civil Lines, Visakhapatnam, Andhra Pradesh - 405337",
+   "registration_type": "Regular",
+   "date_of_liability": "2023-09-20",
+   "constitution": "Proprietorship",
+   "legal_name": "Anita Kulkarni (Prop. Kaveri Insurance Advisors)",
+   "trade_name": "Kaveri Insurance Advisors",
+   "gstin": "37LDYXK0296F1ZB"
+  },
+  "confidence": {
+   "address": 0.871,
+   "registration_type": 0.854,
+   "date_of_liability": 0.827,
+   "constitution": 0.858,
+   "legal_name": 0.869,
+   "trade_name": 0.831,
+   "gstin": 0.782
+  },
+  "engine": "rapidocr",
+  "quality": {
+   "blur": 1282.9,
+   "readable": true
+  }
+ },
+ "K09_udyam_certificate.png:f0e1bb788506d27c": {
+  "fields": {
+   "udyam_number": "UDYAM-AP-00-9751562",
+   "date_of_registration": "2023-07-04",
+   "enterprise_name": "Kaveri Insurance Advisors",
+   "major_activity": "Services",
+   "state": "Andhra Pradesh",
+   "city": "Visakhapatnam"
+  },
+  "confidence": {
+   "udyam_number": 0.891,
+   "date_of_registration": 0.824,
+   "enterprise_name": 0.875,
+   "major_activity": 0.849,
+   "state": 0.811,
+   "city": 0.843
+  },
+  "engine": "rapidocr",
+  "quality": {
+   "blur": 1005.1,
+   "readable": true
+  }
+ },
+ "K09_address_proof.png:5ca04d6c3c5c9d3c": {
+  "fields": {
+   "amount_due": "28569",
+   "supply_address": "Shop/Unit 217, Civil Lines, Visakhapatnam, Andhra Pradesh - 405337",
+   "units": "2026",
+   "consumer_no": "9375012581",
+   "billed_to": "Kaveri Insurance Advisors",
+   "bill_date": "2026-07-10"
+  },
+  "confidence": {
+   "amount_due": 0.788,
+   "supply_address": 0.888,
+   "units": 0.789,
+   "consumer_no": 0.862,
+   "billed_to": 0.879,
+   "bill_date": 0.844
+  },
+  "engine": "rapidocr",
+  "quality": {
+   "blur": 1022.3,
+   "readable": true
+  }
+ },
+ "K09_signatory_id.png:dfeb0f24fa74b950": {
+  "fields": {
+   "for_business": "Kaveri Insurance Advisors",
+   "designation": "Office admin",
+   "valid_till": "2027-12-22",
+   "id_no": "SYN-ID-126040",
+   "name": "Anita Kulkarni"
+  },
+  "confidence": {
+   "for_business": 0.906,
+   "designation": 0.89,
+   "valid_till": 0.883,
+   "id_no": 0.903,
+   "name": 0.884
+  },
+  "engine": "rapidocr",
+  "quality": {
+   "blur": 1912.7,
+   "readable": true
+  }
+ },
+ "K10_gst_certificate.png:2331a714627354cf": {
+  "fields": {
+   "address": "Shop/Unit 21, Sector 14, Mumbai, Maharashtra - 570043",
+   "registration_type": "Regular",
+   "date_of_liability": "2022-07-13",
+   "constitution": "Limited Liability Partnership",
+   "legal_name": "Kaveri Stays LLP",
+   "trade_name": "Kaveri Stays LLP",
+   "gstin": "27QHJXK0658U1ZL"
+  },
+  "confidence": {
+   "address": 0.847,
+   "registration_type": 0.852,
+   "date_of_liability": 0.838,
+   "constitution": 0.87,
+   "legal_name": 0.845,
+   "trade_name": 0.841,
+   "gstin": 0.807
+  },
+  "engine": "rapidocr",
+  "quality": {
+   "blur": 1193.3,
+   "readable": true
+  }
+ },
+ "K10_udyam_certificate.png:901d6ccf3e8d3b1d": {
+  "fields": {
+   "udyam_number": "UDYAM-MH-00-7183141",
+   "date_of_registration": "2024-01-09",
+   "enterprise_name": "Kaveri Stays LLP",
+   "major_activity": "Services",
+   "state": "Maharashtra",
+   "city": "Mumbai"
+  },
+  "confidence": {
+   "udyam_number": 0.907,
+   "date_of_registration": 0.824,
+   "enterprise_name": 0.853,
+   "major_activity": 0.814,
+   "state": 0.829,
+   "city": 0.796
+  },
+  "engine": "rapidocr",
+  "quality": {
+   "blur": 955.3,
+   "readable": true
+  }
+ },
+ "K10_address_proof.png:fa323e2bf8383e80": {
+  "fields": {
+   "amount_due": "23713",
+   "supply_address": "Shop/Unit 21, Sector 14, Mumbai, Maharashtra -570043",
+   "units": "675",
+   "consumer_no": "6910330901",
+   "billed_to": "Kaveri Stays LLP",
+   "bill_date": "2026-06-18"
+  },
+  "confidence": {
+   "amount_due": 0.822,
+   "supply_address": 0.852,
+   "units": 0.732,
+   "consumer_no": 0.869,
+   "billed_to": 0.844,
+   "bill_date": 0.813
+  },
+  "engine": "rapidocr",
+  "quality": {
+   "blur": 966.8,
+   "readable": true
+  }
+ },
+ "K10_signatory_id.png:fa85f282f5e64a22": {
+  "fields": {
+   "for_business": "Kaveri Stays LLP",
+   "designation": "Owner",
+   "valid_till": "2029-06-01",
+   "id_no": "SYN-ID-247542",
+   "name": "Nisha Arora"
+  },
+  "confidence": {
+   "for_business": 0.917,
+   "designation": 0.77,
+   "valid_till": 0.868,
+   "id_no": 0.883,
+   "name": 0.867
+  },
+  "engine": "rapidocr",
+  "quality": {
+   "blur": 1757.6,
+   "readable": true
+  }
+ },
+ "K11_gst_certificate.png:36b9aecc4ea59b8c": {
+  "fields": {
+   "address": "Shop/Unit 188, Industrial Area Phase 2, Ludhiana, Punjab - 541498",
+   "registration_type": "Regular",
+   "date_of_liability": "2019-08-19",
+   "constitution": "Private Limited Company",
+   "legal_name": "Trinity Bake House Pvt Ltd",
+   "trade_name": "Trinity Bake House Pvt Ltd",
+   "gstin": "03KGZXT1320R1ZZ"
+  },
+  "confidence": {
+   "address": 0.871,
+   "registration_type": 0.853,
+   "date_of_liability": 0.83,
+   "constitution": 0.813,
+   "legal_name": 0.828,
+   "trade_name": 0.824,
+   "gstin": 0.812
+  },
+  "engine": "rapidocr",
+  "quality": {
+   "blur": 1258.5,
+   "readable": true
+  }
+ },
+ "K11_udyam_certificate.png:f16aed63c80030d5": {
+  "fields": {
+   "udyam_number": "UDYAM-PB-00-9719478",
+   "date_of_registration": "2025-09-15",
+   "enterprise_name": "Trinity Bake House Pvt Ltd",
+   "major_activity": "Services",
+   "state": "Punjab",
+   "city": "Ludhiana"
+  },
+  "confidence": {
+   "udyam_number": 0.877,
+   "date_of_registration": 0.829,
+   "enterprise_name": 0.869,
+   "major_activity": 0.804,
+   "state": 0.779,
+   "city": 0.807
+  },
+  "engine": "rapidocr",
+  "quality": {
+   "blur": 966.7,
+   "readable": true
+  }
+ },
+ "K11_address_proof.png:303250a5472f8f65": {
+  "fields": {
+   "amount_due": "2768",
+   "supply_address": "Shop/Unit 188, Industrial Area Phase 2, Ludhiana, Punjab - 541498",
+   "units": "981",
+   "consumer_no": "2710511786",
+   "billed_to": "Trinity Bake House Pvt Ltd",
+   "bill_date": "2025-10-31"
+  },
+  "confidence": {
+   "amount_due": 0.798,
+   "supply_address": 0.884,
+   "units": 0.764,
+   "consumer_no": 0.887,
+   "billed_to": 0.851,
+   "bill_date": 0.831
+  },
+  "engine": "rapidocr",
+  "quality": {
+   "blur": 1011.3,
+   "readable": true
+  }
+ },
+ "K11_signatory_id.png:41a0b9aef1fd5878": {
+  "fields": {
+   "for_business": "Trinity Bake House Pvt Ltd",
+   "designation": "Owner",
+   "valid_till": "2028-12-23",
+   "id_no": "SYN-ID-440312",
+   "name": "Vikram pillai"
+  },
+  "confidence": {
+   "for_business": 0.906,
+   "designation": 0.759,
+   "valid_till": 0.863,
+   "id_no": 0.909,
+   "name": 0.865
+  },
+  "engine": "rapidocr",
+  "quality": {
+   "blur": 1848.7,
+   "readable": true
+  }
+ },
+ "K12_gst_certificate.png:380df624f93cc556": {
+  "fields": {
+   "address": "Shop/Unit 216, Nehru Nagar, Visakhapatnam, Andhra Pradesh - 762071",
+   "registration_type": "Regular",
+   "date_of_liability": "2017-01-08",
+   "constitution": "Proprietorship",
+   "legal_name": "Pooja Agarwal (Prop. Star Electronics)",
+   "trade_name": "Star Electronics",
+   "gstin": "37NBLXS1145E1ZU"
+  },
+  "confidence": {
+   "address": 0.874,
+   "registration_type": 0.852,
+   "date_of_liability": 0.849,
+   "constitution": 0.84,
+   "legal_name": 0.836,
+   "trade_name": 0.832,
+   "gstin": 0.811
+  },
+  "engine": "rapidocr",
+  "quality": {
+   "blur": 1242.3,
+   "readable": true
+  }
+ },
+ "K12_udyam_certificate.png:31917be127618bfe": {
+  "fields": {
+   "udyam_number": "UDYAM-AP-00-5186772",
+   "date_of_registration": "2024-02-03",
+   "enterprise_name": "Star Electronics",
+   "major_activity": "Services",
+   "state": "Andhra Pradesh",
+   "city": "Visakhapatnam"
+  },
+  "confidence": {
+   "udyam_number": 0.906,
+   "date_of_registration": 0.858,
+   "enterprise_name": 0.858,
+   "major_activity": 0.813,
+   "state": 0.833,
+   "city": 0.833
+  },
+  "engine": "rapidocr",
+  "quality": {
+   "blur": 981.5,
+   "readable": true
+  }
+ },
+ "K12_address_proof.png:7d735237fc648f17": {
+  "fields": {
+   "amount_due": "25639",
+   "supply_address": "Shop/Unit 216, Nehru Nagar, Visakhapatnam, Andhra Pradesh - 762071",
+   "units": "492",
+   "consumer_no": "6982457282",
+   "billed_to": "Star Electronics",
+   "bill_date": "2026-07-06"
+  },
+  "confidence": {
+   "amount_due": 0.824,
+   "supply_address": 0.873,
+   "units": 0.732,
+   "consumer_no": 0.834,
+   "billed_to": 0.866,
+   "bill_date": 0.823
+  },
+  "engine": "rapidocr",
+  "quality": {
+   "blur": 1006.4,
+   "readable": true
+  }
+ },
+ "K12_signatory_id.png:970754fe9d9573b5": {
+  "fields": {
+   "for_business": "Star Electronics",
+   "designation": "Owner",
+   "valid_till": "2029-03-03",
+   "id_no": "SYN-ID-365512",
+   "name": "Pooja Agarwal"
+  },
+  "confidence": {
+   "for_business": 0.907,
+   "designation": 0.77,
+   "valid_till": 0.827,
+   "id_no": 0.836,
+   "name": 0.906
+  },
+  "engine": "rapidocr",
+  "quality": {
+   "blur": 1777.5,
+   "readable": true
+  }
+ }
+}

@@ -1,0 +1,189 @@
+{
+  "n_leads": 5000,
+  "base_rate": 0.0736,
+  "features_cat": [
+    "lead_source",
+    "segment",
+    "business_type",
+    "city",
+    "city_tier",
+    "preferred_language",
+    "annual_turnover_band",
+    "has_gstin",
+    "has_udyam",
+    "current_internet",
+    "current_provider",
+    "contact_role",
+    "gst_status",
+    "constitution"
+  ],
+  "features_num": [
+    "employee_count",
+    "num_sites",
+    "monthly_telecom_spend_inr",
+    "n_poi",
+    "poi_min_cost",
+    "poi_max_cost",
+    "spend_per_site",
+    "spend_per_emp",
+    "poi_cost_to_spend",
+    "gst_age_days",
+    "udyam_age_days"
+  ],
+  "forbidden_assert": "passed",
+  "cv_5fold": {
+    "lr": {
+      "roc_auc_mean": 0.6855,
+      "roc_auc_std": 0.0334,
+      "pr_auc_mean": 0.1427
+    },
+    "rf": {
+      "roc_auc_mean": 0.6831,
+      "roc_auc_std": 0.0349,
+      "pr_auc_mean": 0.1359
+    },
+    "gb": {
+      "roc_auc_mean": 0.6923,
+      "roc_auc_std": 0.0349,
+      "pr_auc_mean": 0.1477
+    },
+    "hgb": {
+      "roc_auc_mean": 0.66,
+      "roc_auc_std": 0.0426,
+      "pr_auc_mean": 0.1406
+    },
+    "soft_vote": {
+      "roc_auc_mean": 0.6967,
+      "roc_auc_std": 0.0345,
+      "pr_auc_mean": 0.1473
+    }
+  },
+  "holdout_20pct": {
+    "lr": {
+      "roc_auc": 0.6484,
+      "pr_auc": 0.1228
+    },
+    "rf": {
+      "roc_auc": 0.6462,
+      "pr_auc": 0.1138
+    },
+    "gb": {
+      "roc_auc": 0.663,
+      "pr_auc": 0.1402
+    },
+    "hgb": {
+      "roc_auc": 0.6293,
+      "pr_auc": 0.1241
+    },
+    "soft_vote": {
+      "roc_auc": 0.6607,
+      "pr_auc": 0.1276
+    }
+  },
+  "best_cv_model": "soft_vote",
+  "oof_blended_auc": 0.6908,
+  "top_lr_coefficients": [
+    [
+      "cat__lead_source_WhatsApp campaign",
+      -1.087
+    ],
+    [
+      "cat__lead_source_Referral",
+      1.026
+    ],
+    [
+      "cat__gst_status_Suspended",
+      -0.989
+    ],
+    [
+      "cat__business_type_Gym chain",
+      0.771
+    ],
+    [
+      "cat__business_type_Packaging unit",
+      0.733
+    ],
+    [
+      "cat__business_type_Restaurant chain",
+      -0.616
+    ],
+    [
+      "cat__lead_source_Website form",
+      -0.61
+    ],
+    [
+      "cat__segment_Micro retail & services",
+      -0.574
+    ],
+    [
+      "cat__city_Lucknow",
+      -0.567
+    ],
+    [
+      "cat__city_Vadodara",
+      -0.549
+    ],
+    [
+      "cat__gst_status_Cancelled",
+      0.533
+    ],
+    [
+      "cat__business_type_Real estate agency",
+      0.522
+    ],
+    [
+      "cat__business_type_Textile unit",
+      -0.488
+    ],
+    [
+      "cat__gst_status_Active",
+      0.463
+    ],
+    [
+      "cat__city_Ludhiana",
+      0.459
+    ]
+  ],
+  "mrr_regression": {
+    "cv_r2_log": 0.835,
+    "cv_mae_inr": 4317.0,
+    "n_train": 368
+  },
+  "retention_factor": 0.848,
+  "ev_formula": "propensity x predicted_MRR x 12 x (1 - six_month_churn)",
+  "lift_by_quintile": [
+    {
+      "quintile": "Q1",
+      "mean": 0.018,
+      "size": 1000
+    },
+    {
+      "quintile": "Q2",
+      "mean": 0.044,
+      "size": 1000
+    },
+    {
+      "quintile": "Q3",
+      "mean": 0.069,
+      "size": 1000
+    },
+    {
+      "quintile": "Q4",
+      "mean": 0.088,
+      "size": 1000
+    },
+    {
+      "quintile": "Q5",
+      "mean": 0.149,
+      "size": 1000
+    }
+  ],
+  "routing_counts": {
+    "5. Nurture via WhatsApp link (low touch)": 1541,
+    "4. GST help first (unlock path)": 1443,
+    "3. Self-serve link (fast track)": 975,
+    "1. Field Sales VIP (high propensity + high value)": 680,
+    "2. Channel partner assisted": 361
+  },
+  "notes": "Modest AUC: the synthetic data has weak signal. Report honestly; use score for prioritisation, not prediction."
+}

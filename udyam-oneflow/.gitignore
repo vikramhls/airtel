@@ -1,0 +1,32 @@
+# Secrets (API keys live only here)
+.env
+backend/.env
+
+# Runtime state - recreated automatically
+*.db
+backend/uploads/
+
+# Internal planning docs and AI-agent notes - kept on disk, not committed
+docs/
+AGENTS.md
+CLAUDE.md
+
+# Build output and dependencies
+frontend/node_modules/
+frontend/dist/
+*.tsbuildinfo
+
+# Python caches
+__pycache__/
+.pytest_cache/
+*.pyc
+
+# Local scratch - kept on disk, not committed
+scripts/scratch_*.py
+reports/train_log.txt
+
+# OS / editor junk
+.DS_Store
+__MACOSX/
+Thumbs.db
+.vscode/

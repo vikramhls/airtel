@@ -1,0 +1,13 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root { color-scheme: dark; }
+html { -webkit-text-size-adjust: 100%; }
+body { font-size: 16px; overflow-x: hidden; background: #09090A; color: #F4F4F5; }
+body:has(:lang(hi)) { font-family: "Noto Sans Devanagari", Inter, system-ui, sans-serif; }
+/* Native form controls follow the dark surfaces */
+input, select, textarea { background-color: #0F0F11; color: #F4F4F5; }
+input::placeholder, textarea::placeholder { color: #6B6B73; }
+select option { background: #141416; color: #F4F4F5; }
+:focus-visible { outline: 2px solid #FF3B42; outline-offset: 2px; }

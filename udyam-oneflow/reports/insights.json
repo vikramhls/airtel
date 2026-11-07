@@ -1,0 +1,350 @@
+{
+  "insights": {
+    "funnel": [
+      5000,
+      3406,
+      1974,
+      861,
+      588,
+      368
+    ],
+    "activation_pct_by_gstin": {
+      "N": 2.0,
+      "Y": 9.6
+    },
+    "leads_without_gstin_pct": 29.3,
+    "bundle_to_spend_median": 2.59,
+    "pct_paying_more_after": 94.3,
+    "needs_to_quote_price_or_competitor_pct": 55.8,
+    "visit_never_happened": 827,
+    "unreachable": 805,
+    "paperwork_share_of_drops_pct": 5.9,
+    "chase_calls_vs_churn": [
+      {
+        "customer_follow_up_calls": 1,
+        "customers": 34,
+        "churn_pct": 5.9,
+        "nps": 7.5
+      },
+      {
+        "customer_follow_up_calls": 2,
+        "customers": 84,
+        "churn_pct": 14.3,
+        "nps": 7.2
+      },
+      {
+        "customer_follow_up_calls": 3,
+        "customers": 137,
+        "churn_pct": 11.7,
+        "nps": 6.9
+      },
+      {
+        "customer_follow_up_calls": 4,
+        "customers": 70,
+        "churn_pct": 20.0,
+        "nps": 6.7
+      },
+      {
+        "customer_follow_up_calls": 5,
+        "customers": 43,
+        "churn_pct": 27.9,
+        "nps": 6.0
+      }
+    ],
+    "activation_pct_by_language": {
+      "Bengali": 9.0,
+      "English": 8.0,
+      "Gujarati": 6.0,
+      "Hindi": 7.9,
+      "Kannada": 5.1,
+      "Malayalam": 8.4,
+      "Marathi": 6.3,
+      "Punjabi": 4.2,
+      "Tamil": 4.3,
+      "Telugu": 7.7
+    },
+    "avg_days_to_activate": 17.6,
+    "cac_per_activation_inr": 15053
+  },
+  "funnel": {
+    "segment": null,
+    "stages": [
+      {
+        "stage": "Lead",
+        "count": 5000,
+        "pct_of_previous": null,
+        "dropped_here": 1594
+      },
+      {
+        "stage": "Contacted",
+        "count": 3406,
+        "pct_of_previous": 68.1,
+        "dropped_here": 1432
+      },
+      {
+        "stage": "Needs assessed",
+        "count": 1974,
+        "pct_of_previous": 58.0,
+        "dropped_here": 1113
+      },
+      {
+        "stage": "Quote accepted",
+        "count": 861,
+        "pct_of_previous": 43.6,
+        "dropped_here": 273
+      },
+      {
+        "stage": "KYC complete",
+        "count": 588,
+        "pct_of_previous": 68.3,
+        "dropped_here": 220
+      },
+      {
+        "stage": "Activated",
+        "count": 368,
+        "pct_of_previous": 62.6,
+        "dropped_here": 0
+      }
+    ],
+    "lead_to_activation_pct": 7.36,
+    "avg_days_to_activate": 17.6,
+    "avg_follow_up_calls": 3.0,
+    "cac_per_activation_inr": 15053
+  },
+  "sources": [
+    {
+      "source": "Field sales",
+      "leads": 1720,
+      "activated": 125,
+      "activation_pct": 7.27,
+      "cost_per_lead_inr": 1769,
+      "cac_per_activation_inr": 24335
+    },
+    {
+      "source": "Channel partner",
+      "leads": 1010,
+      "activated": 81,
+      "activation_pct": 8.02,
+      "cost_per_lead_inr": 1672,
+      "cac_per_activation_inr": 20851
+    },
+    {
+      "source": "Website form",
+      "leads": 995,
+      "activated": 43,
+      "activation_pct": 4.32,
+      "cost_per_lead_inr": 274,
+      "cac_per_activation_inr": 6352
+    },
+    {
+      "source": "Inbound call",
+      "leads": 504,
+      "activated": 48,
+      "activation_pct": 9.52,
+      "cost_per_lead_inr": 487,
+      "cac_per_activation_inr": 5113
+    },
+    {
+      "source": "Referral",
+      "leads": 413,
+      "activated": 61,
+      "activation_pct": 14.77,
+      "cost_per_lead_inr": 605,
+      "cac_per_activation_inr": 4099
+    },
+    {
+      "source": "WhatsApp campaign",
+      "leads": 358,
+      "activated": 10,
+      "activation_pct": 2.79,
+      "cost_per_lead_inr": 112,
+      "cac_per_activation_inr": 4026
+    }
+  ],
+  "segments": [
+    {
+      "segment": "Micro retail & services",
+      "key": "micro",
+      "leads": 2709,
+      "activation_pct": 4.06,
+      "avg_bundle_inr": 2505,
+      "median_spend_today_inr": 925,
+      "median_bundle_to_spend": 2.74,
+      "churn_6m_pct": 22.7,
+      "avg_nps": 7.0
+    },
+    {
+      "segment": "Professional offices",
+      "key": "prof",
+      "leads": 1247,
+      "activation_pct": 11.07,
+      "avg_bundle_inr": 6796,
+      "median_spend_today_inr": 2525,
+      "median_bundle_to_spend": 2.66,
+      "churn_6m_pct": 13.8,
+      "avg_nps": 6.9
+    },
+    {
+      "segment": "Small manufacturers",
+      "key": "mfg",
+      "leads": 289,
+      "activation_pct": 12.8,
+      "avg_bundle_inr": 19980,
+      "median_spend_today_inr": 13800,
+      "median_bundle_to_spend": 1.23,
+      "churn_6m_pct": 8.1,
+      "avg_nps": 6.5
+    },
+    {
+      "segment": "Small multi-site businesses",
+      "key": "multi",
+      "leads": 755,
+      "activation_pct": 10.99,
+      "avg_bundle_inr": 31233,
+      "median_spend_today_inr": 9650,
+      "median_bundle_to_spend": 3.04,
+      "churn_6m_pct": 10.8,
+      "avg_nps": 6.7
+    }
+  ],
+  "drop_reasons": {
+    "total_dropped": 4632,
+    "rows": [
+      {
+        "stage": "Lead",
+        "reason": "Unreachable after 3 attempts",
+        "count": 805,
+        "pct_of_drops": 17.4
+      },
+      {
+        "stage": "Lead",
+        "reason": "Not interested on first call",
+        "count": 470,
+        "pct_of_drops": 10.1
+      },
+      {
+        "stage": "Lead",
+        "reason": "Wrong or invalid number",
+        "count": 319,
+        "pct_of_drops": 6.9
+      },
+      {
+        "stage": "Contacted",
+        "reason": "Owner had no time for a visit",
+        "count": 531,
+        "pct_of_drops": 11.5
+      },
+      {
+        "stage": "Contacted",
+        "reason": "Locked in with current provider",
+        "count": 325,
+        "pct_of_drops": 7.0
+      },
+      {
+        "stage": "Contacted",
+        "reason": "Visit not scheduled by sales",
+        "count": 296,
+        "pct_of_drops": 6.4
+      },
+      {
+        "stage": "Contacted",
+        "reason": "Only wanted a mobile plan",
+        "count": 280,
+        "pct_of_drops": 6.0
+      },
+      {
+        "stage": "Needs assessed",
+        "reason": "Price too high",
+        "count": 414,
+        "pct_of_drops": 8.9
+      },
+      {
+        "stage": "Needs assessed",
+        "reason": "Competitor offered cheaper plan",
+        "count": 207,
+        "pct_of_drops": 4.5
+      },
+      {
+        "stage": "Needs assessed",
+        "reason": "Quote too complex to understand",
+        "count": 206,
+        "pct_of_drops": 4.4
+      },
+      {
+        "stage": "Needs assessed",
+        "reason": "Quote took too long to arrive",
+        "count": 179,
+        "pct_of_drops": 3.9
+      },
+      {
+        "stage": "Needs assessed",
+        "reason": "Decided to wait",
+        "count": 107,
+        "pct_of_drops": 2.3
+      },
+      {
+        "stage": "Quote accepted",
+        "reason": "Missing GST or Udyam document",
+        "count": 94,
+        "pct_of_drops": 2.0
+      },
+      {
+        "stage": "Quote accepted",
+        "reason": "Found paperwork too long",
+        "count": 79,
+        "pct_of_drops": 1.7
+      },
+      {
+        "stage": "Quote accepted",
+        "reason": "Authorised signatory not available",
+        "count": 53,
+        "pct_of_drops": 1.1
+      },
+      {
+        "stage": "Quote accepted",
+        "reason": "Document details did not match",
+        "count": 47,
+        "pct_of_drops": 1.0
+      },
+      {
+        "stage": "KYC complete",
+        "reason": "Installation delayed beyond 21 days",
+        "count": 98,
+        "pct_of_drops": 2.1
+      },
+      {
+        "stage": "KYC complete",
+        "reason": "Customer cancelled before install",
+        "count": 53,
+        "pct_of_drops": 1.1
+      },
+      {
+        "stage": "KYC complete",
+        "reason": "Site not feasible for fibre",
+        "count": 41,
+        "pct_of_drops": 0.9
+      },
+      {
+        "stage": "KYC complete",
+        "reason": "First payment failed",
+        "count": 28,
+        "pct_of_drops": 0.6
+      }
+    ],
+    "top3": [
+      {
+        "reason": "Unreachable after 3 attempts",
+        "count": 805
+      },
+      {
+        "reason": "Owner had no time for a visit",
+        "count": 531
+      },
+      {
+        "reason": "Not interested on first call",
+        "count": 470
+      }
+    ]
+  },
+  "bundle_to_spend_mean": 3.73
+}

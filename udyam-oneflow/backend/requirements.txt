@@ -1,0 +1,16 @@
+fastapi==0.115.0
+uvicorn[standard]==0.30.6
+pydantic==2.13.4
+python-multipart>=0.0.9
+pandas==2.2.3
+numpy==2.2.4
+scikit-learn==1.8.0
+joblib==1.5.3
+Pillow>=11.2.1
+opencv-python==4.12.0.88
+httpx==0.28.1
+pytest==9.0.3
+# OCR: RapidOCR (ONNX, no system binary). If a Tesseract binary is present,
+# pytesseract is used instead; both are optional at runtime.
+rapidocr-onnxruntime>=1.2.3
+pytesseract==0.3.13
