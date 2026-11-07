@@ -3,7 +3,7 @@ import { Link, useParams } from "react-router-dom";
 import { api, type Order } from "../api/client";
 import { Banner, Button, Card, ErrorBox, Shell, Spinner } from "../components/ui";
 import { inr, isDemo } from "../hooks/useSession";
-import { useI18n } from "../i18n";
+import { fill, useI18n } from "../i18n";
 
 const DOT: Record<string, string> = {
   // In progress is calm (white + soft glow); amber is reserved for "waiting for you". Red never means "on track".
@@ -38,26 +38,26 @@ export default function Track() {
 
   return (
     <Shell back="/kyc">
-      <p className="text-sm text-ink-soft">Order <span className="font-mono">{o.order_id}</span> · {inr(o.monthly_total)}/month</p>
-      <h1 className="text-xl font-bold">{o.status === "activated" ? "You're live 🎉" : t.track}</h1>
-      <p className="text-[15px]">{t.expected}: <b>{o.expected_activation_date}</b>{o.paused && <span className="text-warn"> (paused until you act)</span>}</p>
+      <p className="text-sm text-ink-soft">{t.orderLbl} <span className="font-mono">{o.order_id}</span> · {inr(o.monthly_total)}/month</p>
+      <h1 className="text-xl font-bold">{o.status === "activated" ? t.youreLive : t.track}</h1>
+      <p className="text-[15px]">{t.expected}: <b>{o.expected_activation_date}</b>{o.paused && <span className="text-warn"> {t.paused}</span>}</p>
 
       {o.pending_action && (
         <div className="mt-4 rounded-2xl border-2 border-warn-edge bg-warn-bg p-4" role="alert">
           <p className="text-sm font-semibold uppercase tracking-wide text-warn">{t.pending}</p>
           <p className="mt-1 text-[16px] font-semibold">{o.pending_action.action}</p>
           <p className="mt-1 text-[14px] text-ink-soft">{o.pending_action.fix_hint}</p>
-          {o.pending_action.products && <p className="mt-1 text-[13px]">Affects: {o.pending_action.products.join(", ")}</p>}
+          {o.pending_action.products && <p className="mt-1 text-[13px]">{t.affects} {o.pending_action.products.join(", ")}</p>}
           <div className="mt-3 flex flex-wrap gap-2">
-            {o.pending_action.link && <Link to={o.pending_action.link} className="rounded-xl bg-brand px-4 py-2.5 text-sm font-semibold text-white">Fix it now</Link>}
+            {o.pending_action.link && <Link to={o.pending_action.link} className="rounded-xl bg-brand px-4 py-2.5 text-sm font-semibold text-white">{t.fixNow}</Link>}
             {o.pending_action.options.includes("recheck_kyc") && (
-              <Button variant="secondary" onClick={() => act(`/orders/${o.order_id}/resolve`, { action: "recheck_kyc" })}>I've fixed it</Button>
+              <Button variant="secondary" onClick={() => act(`/orders/${o.order_id}/resolve`, { action: "recheck_kyc" })}>{t.fixed}</Button>
             )}
             {o.pending_action.options.includes("remove_gst_products") && (
-              <Button variant="secondary" onClick={() => act(`/orders/${o.order_id}/resolve`, { action: "remove_gst_products" })}>Remove those products</Button>
+              <Button variant="secondary" onClick={() => act(`/orders/${o.order_id}/resolve`, { action: "remove_gst_products" })}>{t.removeThose}</Button>
             )}
             {o.pending_action.options.includes("reactivate_gstin") && (
-              <Button variant="ghost" onClick={() => act(`/orders/${o.order_id}/resolve`, { action: "reactivate_gstin" })}>I reactivated my GSTIN</Button>
+              <Button variant="ghost" onClick={() => act(`/orders/${o.order_id}/resolve`, { action: "reactivate_gstin" })}>{t.reactivated}</Button>
             )}
           </div>
         </div>
@@ -76,7 +76,7 @@ export default function Track() {
               <div className="min-w-0 pb-1">
                 <p className={`${s.status === "in_progress" ? "font-semibold text-ink" : s.status === "blocked" ? "font-medium text-warn" : "font-medium"}`}>{s.label}</p>
                 <p className="text-xs text-ink-faint">
-                  {s.status === "done" ? "Done" : s.status === "blocked" ? "Waiting for you" : s.status === "in_progress" ? "In progress" : "Expected"} · {s.expected_date}
+                  {s.status === "done" ? t.stDone : s.status === "blocked" ? t.stWaiting : s.status === "in_progress" ? t.stInProgress : t.stExpected} · {s.expected_date}
                 </p>
                 {s.note && <p className="mt-0.5 text-xs text-ink-soft">{s.note}</p>}
               </div>
@@ -86,17 +86,43 @@ export default function Track() {
       </Card>
 
       <Card className="mt-3">
-        <h2 className="font-semibold">Installation per product</h2>
+        <h2 className="font-semibold">{t.perProduct}</h2>
         <ul className="mt-2 space-y-1 text-[14px]">
           {o.lines.map((l) => (
             <li key={l.product_id} className="flex justify-between gap-2">
               <span>{l.name}{l.qty > 1 ? ` × ${l.qty}` : ""}</span>
-              <span className="text-ink-soft">{l.install_days} day{l.install_days === 1 ? "" : "s"} · by {l.install_date}</span>
+              <span className="text-ink-soft">{l.install_days} {l.install_days === 1 ? t.day : t.days} · {t.by} {l.install_date}</span>
             </li>
           ))}
         </ul>
         <p className="mt-2 text-xs text-ink-faint">{o.eta_formula}</p>
       </Card>
+
+      {o.bill && (
+        <Card className="mt-3">
+          <h2 className="flex items-center justify-between font-semibold">
+            {t.singleBill} <span className="font-mono text-xs font-normal text-ink-faint">{o.bill.account_no}</span>
+          </h2>
+          <ul className="mt-2 space-y-1 text-[14px]">
+            {o.bill.lines.map((l) => (
+              <li key={l.name} className="flex justify-between gap-2"><span>{l.name}{l.qty > 1 ? ` × ${l.qty}` : ""}</span><span>{inr(l.monthly)}</span></li>
+            ))}
+          </ul>
+          <div className="mt-2 flex justify-between border-t border-line pt-2 font-semibold"><span>{t.everyMonth}</span><span>{inr(o.bill.monthly_total)}</span></div>
+          <div className="flex justify-between text-sm text-ink-soft"><span>{t.setupFirst}</span><span>{inr(o.bill.one_time_setup)}</span></div>
+          <div className="flex justify-between text-sm text-ink-soft"><span>{fill(t.firstBill, { d: o.bill.first_bill_date })}</span><span>{inr(o.bill.first_bill_amount)}</span></div>
+          {o.checkout?.mandate && (
+            <p className="mt-2 text-sm text-good">✓ {t.paidBy} {o.checkout.mandate.method}{o.checkout.mandate.handle_masked ? ` (${o.checkout.mandate.handle_masked})` : ""}</p>
+          )}
+          {o.checkout?.esign && <p className="text-sm text-good">✓ {t.esigned} · ref {o.checkout.esign.document_hash}</p>}
+          <div className="mt-3 rounded-xl bg-surface-3 p-3 text-sm">
+            <p className="font-semibold">{t.oneSupportAll}</p>
+            <p className="mt-0.5 text-ink-soft">📞 {o.bill.support.phone} · 💬 WhatsApp {o.bill.support.whatsapp}</p>
+            <p className="text-ink-soft">{t.yourContact} {o.bill.support.account_manager}</p>
+          </div>
+          <p className="mt-2 text-xs text-ink-faint">{o.bill.note}</p>
+        </Card>
+      )}
 
       <Card className="mt-3">
         <h2 className="flex items-center justify-between font-semibold">{t.simulated} <span className="rounded bg-surface-3 px-2 py-0.5 text-[11px] font-normal">Simulated</span></h2>
@@ -113,7 +139,7 @@ export default function Track() {
         <Button variant="secondary" onClick={() => act(`/orders/${o.order_id}/help`)}>{t.needHelp}</Button>
         {o.partner_task && <span className="text-sm text-good">{o.partner_task.message}</span>}
       </div>
-      {o.status === "activated" && <div className="mt-3"><Banner tone="good">All services are live. Your single support number is in the message above.</Banner></div>}
+      {o.status === "activated" && <div className="mt-3"><Banner tone="good">{t.allLive}</Banner></div>}
 
       {demo && (
         <Card className="mt-6 border-dashed">

@@ -58,7 +58,7 @@ OPENROUTER_MODELS = [m.strip() for m in os.getenv(
     "OPENROUTER_MODELS",
     "nvidia/nemotron-3.5-lightning:free,google/gemma-4-31b-it:free,google/gemma-4-26b-a4b-it:free",
 ).split(",") if m.strip()]
-LLM_TIMEOUT_S = float(os.getenv("LLM_TIMEOUT_S", "12"))
+LLM_TIMEOUT_S = float(os.getenv("LLM_TIMEOUT_S", "8"))
 OCR_FALLBACK_LLM = os.getenv("OCR_FALLBACK_LLM", "0") == "1"
 
 # Demo/admin endpoints (advance the order clock, inject a block).

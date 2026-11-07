@@ -10,6 +10,7 @@ import Partner from "./pages/Partner";
 import Plan from "./pages/Plan";
 import QuotePage from "./pages/QuotePage";
 import Track from "./pages/Track";
+import WhatsApp from "./pages/WhatsApp";
 import { useFlow } from "./hooks/useSession";
 
 function TrackLatest() {
@@ -31,6 +32,7 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
           <Route path="/track" element={<TrackLatest />} />
           <Route path="/track/:orderId" element={<Track />} />
           <Route path="/partner" element={<Partner />} />
+          <Route path="/whatsapp" element={<WhatsApp />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </BrowserRouter>

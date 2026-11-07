@@ -38,7 +38,7 @@ We analysed the 5,000-lead dataset (`scripts/analyze_leads.py` → `reports/insi
 | Only **7.4%** of leads activate (5,000 → 3,406 → 1,974 → 861 → 588 → 368). | Self-serve journey that never needs a sales visit to move forward. |
 | **56%** of drops at the steepest stage (Needs assessed → Quote) are *price too high* or *competitor cheaper*. Activated customers end up paying a median **2.6x** their old spend. | **Spend-anchored ladder.** The Start plan sits near what the owner pays today; Grow and Complete show the path up with exact prices. |
 | Leads with a GSTIN activate at **9.6% vs 2.0%**; 29% of leads have none. | **Unlock paths.** Every blocked product says why, what unlocks it and what it adds per month. A partner can help with GST. |
-| **827** leads were lost because a sales visit never happened; **805** were unreachable by phone. Paperwork is only **5.9%** of drops. | Finish on the phone, any time, in English or Hindi. KYC in one sitting with instant fix hints. |
+| **827** leads were lost because a sales visit never happened; **805** were unreachable by phone. Paperwork is only **5.9%** of drops. | Finish on the phone, any time, in English, Hindi or Tamil, or start on WhatsApp. KYC in one sitting with instant fix hints. |
 | Customers chase their order 3 times on average; **5 chase calls → 28% churn** vs 6% after one. | **Proactive tracker** with expected dates and a single "one thing needed" card. |
 | Partners cost **₹20,851** per activation, but referrals and partners convert best. | **Partner cockpit:** tracked links (partner always credited), leads ranked by a trained model, and the cases the advisor couldn't close. |
 
@@ -48,11 +48,12 @@ We analysed the 5,000-lead dataset (`scripts/analyze_leads.py` → `reports/insi
 
 | Step | Screen | Highlights |
 |---|---|---|
-| 1 | **Advisor** `/advise` | Asks business type, city, staff, locations, GST, needs and **current setup + spend**. Chat in **English, Hindi or Hinglish** with quick-reply chips, voice input and editable profile chips. Start from a **GSTIN** to prefill name, city and status from the (mock) registry. Handles "I don't have GST", products we don't sell, cities we don't serve, requests for a human, and prompt-injection attempts. |
+| 1 | **Advisor** `/advise` | Asks business type, city, staff, locations, GST, needs and **current setup + spend**. Answers follow-ups: *why this plan?*, *how much is Fibre 300?*, *what if I had GST / 12 staff / 24 months?*, *remove CCTV*. Chat in **English, Hindi, Hinglish or Tamil** with quick-reply chips, voice input and editable profile chips. Start from a **GSTIN** to prefill name, city and status from the (mock) registry. Handles "I don't have GST", products we don't sell, cities we don't serve, requests for a human, and prompt-injection attempts. |
 | 2 | **Plan** `/plan` | Three rungs, one clear price each, compared with current spend; setup fee, contract and days to go live. **"Why this bundle"** explains every rule that passed. Unlock cards for blocked products. Budget advice when over budget. 12/24-month toggle. |
 | 3 | **Quote** `/quote` | Change quantities, add or remove products. Dependencies are handled and explained ("CCTV needs internet: added Biz Fibre 100"). Totals always equal the sum of the lines. |
-| 4 | **Smart KYC** `/kyc` | **Consent first.** Upload 4 documents → OCR → field extraction → **up to 22 checks** (format, checksum, registry, active status, name/address matching, bill age, ID expiry, photo quality, documents match the business described in the chat) → readiness score with a fix hint for every failure. The owner can correct any field, delete documents or withdraw consent. A cancelled/suspended GSTIN is **remediated, not rejected**. |
-| 5 | **Tracker** `/track/:id` | Five stages with working-day ETAs, per-product install dates, a pending-action card when blocked, a simulated WhatsApp feed and "Need help?". |
+| 4 | **Smart KYC** `/kyc` | **Consent first.** Fetch from **DigiLocker** (simulated) or upload 4 photos → OCR → field extraction → **up to 22 checks** (format, checksum, registry, active status, name/address matching, bill age, ID expiry, photo quality, documents match the business described in the chat) → readiness score with a fix hint for every failure. The owner can correct any field, delete documents or withdraw consent. A cancelled/suspended GSTIN is **remediated, not rejected**. |
+| 5 | **Checkout + Tracker** | Aadhaar-OTP **e-sign** and **UPI AutoPay / e-NACH** mandate (simulated), then five stages with working-day ETAs, **one bill and one support number**, per-product install dates, a pending-action card when blocked, a simulated WhatsApp feed and "Need help?". |
+| — | **WhatsApp channel** `/whatsapp` | The same advisor in a WhatsApp-style chat (simulated), handing over to the app for checkout. |
 | — | **Partner cockpit** `/partner` | Funnel and drop reasons by segment, lead sources and CAC, a **leads queue scored by the trained model** with next-best-action chips, the advisor handoff queue, a **what-if simulator** with editable assumptions, tracked partner links, and model metrics. |
 
 The UI is mobile-first (360 px baseline) with a dark, red-accent theme.
@@ -114,7 +115,7 @@ Other commands (`run.ps1 <cmd>` or `make <cmd>`):
 
 | Command | What it does |
 |---|---|
-| `test` | Runs the 56 backend tests |
+| `test` | Runs the 70 backend tests |
 | `reports` | Regenerates everything in `reports/`: data insights, KYC batch, model training, simulation |
 | `dev` | Backend with auto-reload on :8000 + Vite dev server on :5173 |
 
@@ -131,7 +132,7 @@ cp backend/.env.example backend/.env
 | `GEMINI_API_KEY` | Primary provider (`GEMINI_MODEL`, default `gemini-2.5-flash`) |
 | `OPENROUTER_API_KEY` | Fallback (free models, list in `OPENROUTER_MODELS`) |
 | `LLM_PROVIDER` | Order to try, e.g. `gemini,openrouter`; `none` = scripted only |
-| `LLM_TIMEOUT_S` | Per-call timeout (default 12 s), after which the scripted path answers |
+| `LLM_TIMEOUT_S` | Per-call timeout (default 8 s), after which the scripted path answers. The connection is warmed up at startup. |
 
 `backend/.env` is git-ignored. Never commit keys.
 
@@ -172,11 +173,11 @@ GSTINs, Udyam numbers and phone numbers are masked before any text reaches an LL
 
 Everything below is reproducible with `run.ps1 reports` / `make reports`.
 
-### Tests: 56 passing
+### Tests: 70 passing
 `backend/tests/` covers **20 judge-style scenarios**. Advisor scenarios run with the LLM **off** and with a **deterministic stub**:
 eligibility blocks (city tier, team size, sites, GSTIN), dependency auto-add, leased-line 24-month pricing, mobile-only plans,
 cancelled-GSTIN remediation, over-budget honesty, Hindi input, injection, cities not served, products not sold, GSTIN-first,
-toggle cascades, term switching, the consent gate, and KYC planted problems. Plus unit checks: GSTIN checksum on 3,534/3,534
+toggle cascades, term switching, the consent gate, KYC planted problems, follow-up questions, documents matching the business, checkout (e-sign, AutoPay, single bill), DigiLocker, and a full Tamil conversation. Plus unit checks: GSTIN checksum on 3,534/3,534
 registry rows, 90-day and expiry date edges, masking, no wall-clock in business logic, model leakage, and the simulator baseline.
 
 ### Smart KYC: 12 applicants, local OCR only (`reports/kyc_report.md`)
@@ -253,14 +254,14 @@ udyam-oneflow/
 │   │   │   └── analytics.py     funnel, drop reasons, segments, sources
 │   │   ├── utils/               GSTIN checksum, dates, masking
 │   │   └── data/                synthetic data pack (CSVs + 47 KYC specimen images)
-│   ├── tests/                   56 tests
+│   ├── tests/                   70 tests
 │   ├── requirements.txt
 │   └── .env.example
 ├── frontend/src/
-│   ├── pages/                   Home, Advise, Plan, QuotePage, Kyc, Track, Partner
+│   ├── pages/                   Home, Advise, Plan, QuotePage, Kyc, Track, Partner, WhatsApp
 │   ├── components/ui.tsx        shared UI kit
 │   ├── api/client.ts            typed API client
-│   └── i18n/                    English + Hindi strings
+│   └── i18n/                    English, Hindi and Tamil strings
 ├── scripts/                     seed, analyze_leads, run_kyc_batch, train_propensity, simulate
 ├── models/                      propensity.joblib, mrr.joblib
 ├── reports/                     insights, KYC report, model metrics, lead scores, simulation
@@ -278,7 +279,7 @@ These are design choices, stated openly and all configurable:
 - **Pricing policy:** the catalogue gives a price band. A **12-month** term pays the **midpoint**, **24 months** the **bottom**, under 12 months the **top**. Each line's term = max(product minimum, chosen term); contract = the longest line.
 - **Setup fee** is charged per unit for per-unit products (per site, line, camera, …) and once for per-account, pack, number or IP products.
 - **Default quantities:** per-site items = sites; mobile lines = min(staff, 5) for micro/professional, min(staff, 10) for multi-site/manufacturing; cameras = 2 per site (micro) or 4; channels = max(2, staff ÷ 5).
-- **ETA** = order date + KYC (1 working day automated, 2 with manual review) + 1 processing day + the longest install time; Sundays skipped.
+- **ETA** = order date + KYC (instant when every check passes, 2 working days when a warning needs review, 1 day re-check after a fix) + 1 processing day + the longest install time; Sundays skipped.
 - **Address proof** must be ≤ 90 days old; **name match** ≥ 90% similarity, **address match** ≥ 85%. For LLPs and companies, only the business on the signatory ID is matched (the legal name isn't a person's name).
 - **Simulator** recovery rates per drop reason are editable placeholders, shown on screen.
 
@@ -298,7 +299,8 @@ These are design choices, stated openly and all configurable:
 
 ## Limitations
 
-- Prototype on synthetic data. Registries, payments, WhatsApp messages and partner visits are simulated.
+- Prototype on synthetic data. Registries, DigiLocker, e-sign, AutoPay, the WhatsApp channel and partner visits are simulated (demo OTP 123456).
+- Hindi and Tamil strings are machine-assisted and need a native-speaker review. Product descriptions from the catalogue stay in English.
 - OCR is tuned to the specimen document layouts. Real-world photos would need more templates and the owner-correction step more often.
 - The propensity model's AUC (~0.69) reflects weak signal in the synthetic data. Treat scores as a ranking aid.
 - The simulator's numbers depend on its stated recovery assumptions.

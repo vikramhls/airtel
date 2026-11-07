@@ -15,7 +15,7 @@ import re
 from app import db
 from app.dataio import city_tier, city_tiers
 from app.schemas import BusinessProfile, RecommendationResult
-from app.services import bundler, catalogue, llm, registry, sessions
+from app.services import advisor_qa, bundler, catalogue, llm, registry, sessions
 from app.services.segmenter import TYPE_TO_SEGMENT, canonical_type, infer_segment
 from app.utils import gstin as gstin_util
 from app.utils.mask import mask_gstin
@@ -26,6 +26,9 @@ NEED_VALUES = ["internet", "mobile", "billing_pos", "whatsapp", "sms", "email_cl
 
 # ---------------------------------------------------------------- vocabularies
 TYPE_SYNONYMS = {
+    "மளிகை": "Kirana store", "பல் மருத்துவ": "Dental clinic", "மருந்தகம்": "Pharmacy", "மருந்து கடை": "Pharmacy",
+    "சலூன்": "Salon", "பேக்கரி": "Bakery", "இனிப்பு": "Sweet shop", "ஜவுளி": "Textile unit",
+    "ஆடிட்டர்": "CA firm", "டியூஷன்": "Coaching centre",
     "kirana": "Kirana store", "grocery": "Kirana store", "general store": "Kirana store",
     "provision store": "Kirana store", "किराना": "Kirana store",
     "medical store": "Pharmacy", "chemist": "Pharmacy", "medical shop": "Pharmacy", "दवा": "Pharmacy",
@@ -44,12 +47,16 @@ TYPE_SYNONYMS = {
     "furniture": "Furniture workshop", "printing": "Printing press", "factory": "Factory",
 }
 CHAIN_TYPES = {
+    "உணவகம்": "Restaurant chain", "ஹோட்டல்": "Budget hotel group",
     "restaurant": "Restaurant chain", "cafe": "Restaurant chain", "रेस्टोरेंट": "Restaurant chain",
     "pharmacy": "Pharmacy chain", "bakery": "Bakery chain", "gym": "Gym chain", "hotel": "Budget hotel group",
     "pre-school": "Pre-school chain", "preschool": "Pre-school chain", "play school": "Pre-school chain",
     "apparel": "Apparel retail chain", "clothing": "Apparel retail chain", "electronics": "Electronics retail chain",
 }
-HINDI_CITIES = {
+HINDI_CITIES = {   # Hindi and Tamil spellings of the served cities (Madurai is not served)
+    "சென்னை": "Chennai", "கோயம்புத்தூர்": "Coimbatore", "கோவை": "Coimbatore", "பெங்களூரு": "Bengaluru",
+    "மைசூர்": "Mysuru", "ஹைதராபாத்": "Hyderabad", "மும்பை": "Mumbai", "டெல்லி": "Delhi", "கொச்சி": "Kochi",
+    "மதுரை": "Madurai",
     "दिल्ली": "Delhi", "मुंबई": "Mumbai", "चेन्नई": "Chennai", "पुणे": "Pune", "लखनऊ": "Lucknow",
     "जयपुर": "Jaipur", "कोलकाता": "Kolkata", "हैदराबाद": "Hyderabad", "बेंगलुरु": "Bengaluru",
     "अहमदाबाद": "Ahmedabad", "भोपाल": "Bhopal", "इंदौर": "Indore", "पटना": "Patna", "नागपुर": "Nagpur",
@@ -59,15 +66,15 @@ CITY_ALIASES = {"bangalore": "Bengaluru", "bombay": "Mumbai", "madras": "Chennai
                 "new delhi": "Delhi", "vizag": "Visakhapatnam", "mysore": "Mysuru", "baroda": "Vadodara",
                 "gurgaon": "Gurugram", "gurugram": "Gurugram"}
 NEED_KEYWORDS = {
-    "internet": ["internet", "broadband", "fibre", "fiber", "wifi", "wi-fi", " net ", "इंटरनेट", "ब्रॉडबैंड",
+    "internet": ["internet", "broadband", "fibre", "fiber", "wifi", "wi-fi", " net ", "इंटरनेट", "ब्रॉडबैंड", "இணையம்", "இன்டர்நெட்",
                  "वाईफाई", "airfiber"],
-    "mobile": ["mobile", "sim", "postpaid", "phone line", "phones", "phone", "calling", "मोबाइल", "सिम", "फोन"],
-    "billing_pos": ["billing", "pos", "invoice", "bill machine", "बिलिंग", "बिल"],
-    "whatsapp": ["whatsapp", "व्हाट्सएप"],
+    "mobile": ["mobile", "sim", "postpaid", "phone line", "phones", "phone", "calling", "मोबाइल", "सिम", "फोन", "மொபைல்", "சிம்"],
+    "billing_pos": ["billing", "pos", "invoice", "bill machine", "बिलिंग", "बिल", "பில்லிங்"],
+    "whatsapp": ["whatsapp", "व्हाट्सएप", "வாட்ஸ்அப்"],
     "sms": ["sms", "text message", "एसएमएस"],
     "email_cloud": ["email", "e-mail", "office suite", "ईमेल"],
     "security": ["antivirus", "endpoint", "firewall", "cyber", "security"],
-    "cctv": ["cctv", "camera", "कैमरा", "सीसीटीवी", "surveillance"],
+    "cctv": ["cctv", "camera", "कैमरा", "सीसीटीवी", "surveillance", "கேமரா", "சிசிடிவி"],
     "telephony": ["ivr", "telephony", "call centre", "call center", "landline", "toll free", "toll-free"],
     "wifi": ["guest wifi", "guest wi-fi", "managed wifi", "secure wifi", "customer wifi"],
     "iot": ["machine monitoring", "iot", "sensor"],
@@ -93,9 +100,9 @@ INJECTION = re.compile(
     re.I)
 HUMAN = re.compile(r"\b(human|real person|talk to (?:someone|a person|an agent)|call me|agent|insaan)\b|इंसान", re.I)
 END = r"(?=[\s.,!?।]|$)"   # \b is unreliable after Devanagari vowel signs
-YES = re.compile(r"^\s*(yes|y|yeah|yep|haan|han|ha|ji|ji haan|हाँ|हां|जी|registered|have it|hai)" + END, re.I)
-NO = re.compile(r"^\s*(no|n|nope|nahi|nahin|na|नहीं|नही|not registered|don'?t have)" + END, re.I)
-UNSURE = re.compile(r"not sure|don'?t know|pata nahi|पता नहीं|skip|later|baad mein", re.I)
+YES = re.compile(r"^\s*(yes|y|yeah|yep|haan|han|ha|ji|ji haan|हाँ|हां|जी|ஆம்|ஆமாம்|உள்ளது|registered|have it|hai)" + END, re.I)
+NO = re.compile(r"^\s*(no|n|nope|nahi|nahin|na|नहीं|नही|இல்லை|not registered|don'?t have)" + END, re.I)
+UNSURE = re.compile(r"not sure|don'?t know|pata nahi|पता नहीं|தெரியவில்லை|தவிர்|skip|later|baad mein", re.I)
 WORD_NUM = {"one": 1, "two": 2, "three": 3, "four": 4, "five": 5, "six": 6, "seven": 7, "eight": 8,
             "nine": 9, "ten": 10, "ek": 1, "do": 2, "teen": 3, "char": 4, "paanch": 5, "एक": 1, "दो": 2,
             "तीन": 3, "चार": 4, "पांच": 5, "पाँच": 5}
@@ -164,6 +171,17 @@ T = {
 }
 
 
+NOT_SERVED = {
+    "en": "We don't sell in {city} yet. Your details are saved, and a partner will contact you when we launch there.",
+    "hi": "हम अभी {city} में सेवा नहीं देते। आपकी जानकारी सेव है, वहाँ शुरू होते ही पार्टनर आपसे संपर्क करेंगे।",
+    "ta": "நாங்கள் இன்னும் {city}-இல் சேவை வழங்கவில்லை. உங்கள் விவரங்கள் சேமிக்கப்பட்டுள்ளன; அங்கு தொடங்கியதும் பார்ட்னர் தொடர்புகொள்வார்.",
+}
+UNITS = {
+    "people": {"hi": "लोग", "ta": "பேர்"}, "locations": {"hi": "लोकेशन", "ta": "இடங்கள்"},
+    "today": {"hi": "आज: ", "ta": "இன்று: "}, "month": {"hi": "महीना", "ta": "மாதம்"},
+}
+
+
 def rupees(value: int | float) -> str:
     value = int(round(value))
     s = str(value)
@@ -175,6 +193,8 @@ def rupees(value: int | float) -> str:
 
 
 def detect_lang(text: str, current: str = "en") -> str:
+    if re.search(r"[\u0B80-\u0BFF]", text):
+        return "ta"
     if re.search(r"[ऀ-ॿ]", text):
         return "hi"
     if len(HINGLISH.findall(text)) >= 2:
@@ -186,14 +206,14 @@ def detect_lang(text: str, current: str = "en") -> str:
 def _has_word(text: str, word: str) -> bool:
     """Latin keywords need word boundaries ("iot" must not match "physiotherapy")."""
     word = word.strip()
-    if re.search(r"[ऀ-ॿ]", word):
+    if re.search(r"[\u0900-\u097F\u0B80-\u0BFF]", word):
         return word in text
     return re.search(r"(?<![a-z])" + re.escape(word) + r"(?![a-z])", text) is not None
 
 
 def _amount(text: str) -> int | None:
     """'900', '1,200', '3k', '2.5 thousand', '₹1500' -> rupees."""
-    m = re.search(r"(\d+(?:\.\d+)?)\s*(k|thousand|hazar|हज़ार|हजार)\b", text, re.I)
+    m = re.search(r"(\d+(?:\.\d+)?)\s*(k|thousand|hazar|हज़ार|हजार|ஆயிரம்)\b", text, re.I)
     if m:
         return int(float(m.group(1)) * 1000)
     m = re.search(r"(\d[\d,]{1,7})", text)
@@ -206,7 +226,7 @@ def _find_setup(low: str, at_slot: bool) -> str | None:
     for chip in SETUP_CHIPS + ["None"]:
         if low.strip() == chip.lower():
             return chip
-    if re.search(r"hotspot|हॉटस्पॉट", low):
+    if re.search(r"hotspot|हॉटस्पॉट|ஹாட்ஸ்பாட்", low):
         return "Mobile hotspot"
     if re.search(r"home (?:broadband|wifi|wi-fi|connection|fibre|fiber)|घर का", low):
         return "Home broadband"
@@ -228,6 +248,8 @@ def _find_setup(low: str, at_slot: bool) -> str | None:
 def profile_setup_label(value: str, lang: str) -> str:
     if lang == "hi":
         return SETUP_LABEL_HI.get(value, value)
+    if lang == "ta":
+        return SETUP_LABEL_TA.get(value, value)
     return "nothing yet" if value == "None" else value.lower()
 
 
@@ -296,7 +318,7 @@ def rule_patch(text: str, last_slot: str | None, profile: BusinessProfile) -> di
                         r"clinics|units|gyms|hotels|schools|centres|centers|factories|शाखा|दुकानें)", low)
     if m:
         patch["sites"] = _num(m.group(1))
-    m = re.search(NUM + r"\s*(?:\+\s*)?(?:staff|employees|people|persons|workers|log|members|लोग|कर्मचारी|aadmi)", low) \
+    m = re.search(NUM + r"\s*(?:\+\s*)?(?:staff|employees|people|persons|workers|log|members|लोग|कर्मचारी|aadmi|பேர்|ஊழியர்)", low) \
         or re.search(r"team of\s*" + NUM, low)
     if m:
         patch["employees"] = _num(m.group(1))
@@ -312,9 +334,9 @@ def rule_patch(text: str, last_slot: str | None, profile: BusinessProfile) -> di
         patch["_city_known"] = known
 
     if re.search(r"\b(no|not|don'?t|without|nahi|nahin)\b[^.]{0,20}\bgst|gst\b[^.]{0,15}\b(nahi|nahin|no)\b|"
-                 r"जीएसटी नहीं|gst नहीं", low):
+                 r"जीएसटी नहीं|gst नहीं|ஜிஎஸ்டி இல்லை|gst இல்லை", low):
         patch["has_gstin"] = False
-    elif re.search(r"\bgst\b[^.]{0,15}\b(hai|registered|yes|active)\b|\b(have|got)\b[^.]{0,10}\bgst|जीएसटी है|gst है", low):
+    elif re.search(r"\bgst\b[^.]{0,15}\b(hai|registered|yes|active)\b|\b(have|got)\b[^.]{0,10}\bgst|जीएसटी है|gst है|ஜிஎஸ்டி உள்ளது|gst உள்ளது|gst இருக்கு", low):
         patch["has_gstin"] = True
 
     m = re.search(r"budget\D{0,15}([\d,]{3,7})|(?:under|within|max(?:imum)?|upto|up to)\s*(?:₹|rs\.?|inr)?\s*([\d,]{3,7})", low)
@@ -539,9 +561,10 @@ def chips_for(slot: str, lang: str, sites: int | None = None) -> list[dict]:
                 for n in ("internet", "mobile", "billing_pos", "cctv", "whatsapp", "email_cloud", "wifi",
                           "telephony", "security", "website", "sms")]
     if slot == "current_spend":
-        none = {"label": SETUP_LABEL_HI["None"] if lang == "hi" else "Nothing yet", "value": "None"}
+        none = {"label": {"hi": SETUP_LABEL_HI["None"], "ta": "இன்னும் இல்லை"}.get(lang, "Nothing yet"), "value": "None"}
         options = [o for o in SETUP_CHIPS if o != "Mixed per site" or (sites or 1) > 1]
-        return [{"label": SETUP_LABEL_HI[o] if lang == "hi" else o, "value": o} for o in options] + \
+        label = (lambda o: SETUP_LABEL_HI[o]) if lang == "hi" else (lambda o: SETUP_LABEL_TA[o]) if lang == "ta" else (lambda o: o)
+        return [{"label": label(o), "value": o} for o in options] + \
                [none, {"label": t["skip"], "value": "skip"}]
     if slot == "spend_followup":
         return [{"label": rupees(v), "value": str(v)} for v in (500, 1000, 2000, 5000, 10000)] + \
@@ -567,6 +590,21 @@ def template_explanation(profile: BusinessProfile, rec: RecommendationResult, la
             text += " अभी उपलब्ध नहीं: " + "; ".join(u.name for u in needed[:3]) + " — नीचे अनलॉक का तरीका देखें।"
         if rec.budget_advice:
             text += f" यह आपके बजट से {rupees(rec.budget_advice['over_by'])} ज़्यादा है।"
+        return text
+    if lang == "ta":
+        text = (f"தொடக்கம் (Start): {names} — மாதம் {rupees(start.total_monthly)}, அமைப்புக் கட்டணம் "
+                f"{rupees(start.total_setup)}, {start.contract_months} மாத ஒப்பந்தம், சுமார் {start.install_days} நாட்களில் செயல்படும்.")
+        if start.vs_current_spend:
+            text += f" இது இன்றைய செலவின் {start.vs_current_spend}× ஆகும்."
+        if grow.total_monthly > start.total_monthly:
+            text += f" Grow: மாதம் {rupees(grow.total_monthly)}."
+        if complete.total_monthly > grow.total_monthly:
+            text += f" Complete: மாதம் {rupees(complete.total_monthly)}."
+        needed = [u for u in rec.blocked if u.needed]
+        if needed:
+            text += " இப்போது கிடைக்காதவை: " + "; ".join(u.name for u in needed[:3]) + " — திறக்கும் வழியை கீழே பாருங்கள்."
+        if rec.budget_advice:
+            text += f" இது உங்கள் பட்ஜெட்டை விட {rupees(rec.budget_advice['over_by'])} அதிகம்."
         return text
     text = f"Start: {names} for {rupees(start.total_monthly)}/month"
     if start.total_setup:
@@ -639,7 +677,7 @@ def llm_explanation(profile: BusinessProfile, rec: RecommendationResult, lang: s
         "budget_note": (rec.budget_advice or {}).get("note"),
     }
     system = ("You are the OneFlow advisor for Accel Business. Explain the plan below to a small-business owner in "
-              f"{'Hindi (Devanagari)' if lang == 'hi' else 'simple English'}, in at most 90 words, warm and plain. "
+              f"{ {'hi': 'Hindi (Devanagari)', 'ta': 'Tamil (Tamil script)'}.get(lang, 'simple English') }, in at most 90 words, warm and plain. "
               "Use ONLY numbers and product names that appear in the facts; never invent prices, discounts or products. "
               "Mention the Start price first. No markdown.")
     user = json.dumps(facts, ensure_ascii=False)
@@ -673,9 +711,23 @@ def handle_message(session_id: str, text: str, lang: str | None = None) -> dict:
     handoff = None
 
     rules = rule_patch(text, last_slot, profile)
+
+    # Follow-up questions (why / how much / what if / remove) are answered from the engine.
+    # A question never edits the profile as a side effect ("how much is Fibre 300?" must not add it).
+    qa_reply, qa_profile = None, None
+    answering_spend = last_slot in ("current_spend", "spend_followup") and "current_spend_inr" in rules
+    qa_kind = None if (INJECTION.search(text) or answering_spend) else advisor_qa.detect(text)
+    if qa_kind == "remove" and not profile.needs:
+        qa_kind = None
+    if qa_kind:
+        qa_reply, qa_profile = advisor_qa.answer(qa_kind, text, profile, lang)
+        if qa_reply:
+            intent = {"price": "ask_price", "why": "ask_why", "whatif": "ask_unlock", "remove": "change_choice"}[qa_kind]
+            rules = {}
+
     # The LLM is only a fallback reader: skip it when the rules already understood the message.
     found = [k for k in rules if not k.startswith("_") or k == "_skip_spend"]
-    understood = (len(text.split()) <= 4 and found) or len(found) >= 2
+    understood = bool(qa_reply) or (len(text.split()) <= 4 and found) or len(found) >= 2
     llm_raw, llm_intent = ({}, None) if understood else llm_patch(text, last_slot)
     llm_clean = clean_patch(llm_raw)
     if rules.get("_spend_answer"):
@@ -711,6 +763,8 @@ def handle_message(session_id: str, text: str, lang: str | None = None) -> dict:
     if "requested_products" in update:
         update["requested_products"] = list(dict.fromkeys(profile.requested_products + update["requested_products"]))
     gstin_number = update.pop("gstin", None)
+    if qa_profile is not None:          # "remove CCTV": the answer already rebuilt the profile
+        profile = qa_profile
     profile = profile.model_copy(update=update)
     if "business_type" in update or "sites" in update:
         profile = profile.model_copy(update={"segment": None})
@@ -721,7 +775,7 @@ def handle_message(session_id: str, text: str, lang: str | None = None) -> dict:
         state["clarify"] = "clinic_kind"
     elif profile.business_type:
         state.pop("clarify", None)
-    if merged.get("_skip_spend") or last_slot in ("current_spend", "spend_followup"):
+    if (merged.get("_skip_spend") or last_slot in ("current_spend", "spend_followup")) and not qa_reply:
         state["asked"].append("current_spend")
     # Owner told us their setup but not the amount: ask for the amount once.
     followup = (last_slot == "current_spend" and "current_internet" in merged and "current_spend_inr" not in merged
@@ -746,22 +800,24 @@ def handle_message(session_id: str, text: str, lang: str | None = None) -> dict:
     if "city" in update:
         facts.append(profile.city)
     if "employees" in update:
-        facts.append(f"{profile.employees} {'लोग' if lang == 'hi' else 'people'}")
+        facts.append(f"{profile.employees} {UNITS['people'].get(lang, 'people')}")
     if "sites" in update and (profile.sites or 1) > 1:
-        facts.append(f"{profile.sites} {'लोकेशन' if lang == 'hi' else 'locations'}")
+        facts.append(f"{profile.sites} {UNITS['locations'].get(lang, 'locations')}")
     if "has_gstin" in update and not gstin_number:
         facts.append(("GST: " + (t["yes"] if profile.has_gstin else t["no"])))
     if "needs" in update:
         facts.append(", ".join(NEED_LABELS[lang][n] for n in update["needs"]))
     if "current_internet" in update:
         setup = profile_setup_label(update["current_internet"], lang)
-        facts.append(("आज: " if lang == "hi" else "today: ") + setup)
+        facts.append(UNITS["today"].get(lang, "today: ") + setup)
     if "current_spend_inr" in update:
-        facts.append(f"{rupees(profile.current_spend_inr)}/{'महीना' if lang == 'hi' else 'month'}")
+        facts.append(f"{rupees(profile.current_spend_inr)}/{UNITS['month'].get(lang, 'month')}")
     if "budget_inr" in update:
         facts.append(f"budget {rupees(profile.budget_inr)}")
     if facts and intent != "injection_attempt":
         notes.insert(0, t["got"].format(facts="; ".join(str(f) for f in facts if f)))
+    if qa_reply:
+        notes.append(qa_reply)
 
     sessions.save_profile(session_id, profile)
 
@@ -770,7 +826,7 @@ def handle_message(session_id: str, text: str, lang: str | None = None) -> dict:
     rec = None
     if profile.city and city_tier(profile.city) is None:
         rec = bundler.recommend(profile)
-        notes.append(rec.notice or "")
+        notes.append(NOT_SERVED.get(lang, NOT_SERVED["en"]).format(city=profile.city))
         sessions.add_handoff(session_id, "city_not_served", {"city": profile.city, "profile": profile.model_dump()})
         handoff = handoff or "city_not_served"
         state["last_slot"] = "city"
@@ -785,7 +841,13 @@ def handle_message(session_id: str, text: str, lang: str | None = None) -> dict:
     missing = missing_slots(profile, state)
     required_missing = [m for m in missing if m not in ("current_spend",)]
     explanation_source = None
-    if followup and not required_missing:
+    if qa_reply and last_slot and (last_slot in missing or last_slot in ("current_spend", "spend_followup")):
+        # Answered a side question mid-questionnaire: repeat the pending question.
+        slot = last_slot
+        notes.append(Q[slot][lang])
+        chips = chips_for(slot, lang, profile.sites)
+        next_slot = slot
+    elif followup and not required_missing:
         state["last_slot"] = "spend_followup"
         state["spend_followup_done"] = True
         notes.append(Q["spend_followup"][lang])
@@ -811,10 +873,14 @@ def handle_message(session_id: str, text: str, lang: str | None = None) -> dict:
             if rec.handoff:
                 sessions.add_handoff(session_id, "large_or_infeasible",
                                      {"profile": profile.model_dump(), "start_total": rec.ladder[0].total_monthly})
-            explanation = llm_explanation(profile, rec, lang)
-            explanation_source = "llm" if explanation else "template"
-            notes.append(explanation or template_explanation(profile, rec, lang))
-            notes.append(t["plan_ready"])
+            if qa_reply:   # the answer is the reply; don't repeat the whole plan
+                if qa_kind == "remove":
+                    notes.append(t["plan_ready"])
+            else:
+                explanation = llm_explanation(profile, rec, lang)
+                explanation_source = "llm" if explanation else "template"
+                notes.append(explanation or template_explanation(profile, rec, lang))
+                notes.append(t["plan_ready"])
         else:
             notes.append(rec.notice or "")
 
@@ -838,6 +904,15 @@ def handle_message(session_id: str, text: str, lang: str | None = None) -> dict:
 
 def greeting(lang: str = "en") -> dict:
     hello = {"en": "Namaste! I'm your Accel Business advisor. I'll build a plan that starts near what you pay today. ",
-             "hi": "नमस्ते! मैं आपका Accel Business सलाहकार हूँ। मैं ऐसा प्लान बनाऊँगा जो आपके मौजूदा खर्च के करीब से शुरू हो। "}
+             "hi": "नमस्ते! मैं आपका Accel Business सलाहकार हूँ। मैं ऐसा प्लान बनाऊँगा जो आपके मौजूदा खर्च के करीब से शुरू हो। ",
+             "ta": "வணக்கம்! நான் உங்கள் Accel Business ஆலோசகர். இன்று நீங்கள் செலுத்துவதற்கு அருகில் தொடங்கும் திட்டத்தை உருவாக்குகிறேன். "}
     return {"reply": hello[lang] + Q["business_type"][lang], "chips": chips_for("business_type", lang),
             "next_slot": "business_type"}
+
+
+# Tamil (machine-assisted; review before production)
+for _slot, _text in {'business_type': 'உங்கள் தொழில் என்ன? உதாரணமாக மளிகைக் கடை, பல் மருத்துவமனை அல்லது உணவகச் சங்கிலி.', 'clinic_kind': 'இது எந்த வகை கிளினிக்?', 'city': 'உங்கள் தொழில் எந்த நகரத்தில் உள்ளது?', 'employees': 'உங்களையும் சேர்த்து எத்தனை பேர் வேலை செய்கிறார்கள்? எண்ணை டைப் செய்யுங்கள்.', 'sites': 'உங்களுக்கு எத்தனை கிளைகள் அல்லது இடங்கள் உள்ளன?', 'has_gstin': 'உங்களிடம் GST பதிவு (GSTIN) உள்ளதா? GSTIN-ஐ டைப் செய்தால் உங்கள் விவரங்களை நான் நிரப்புகிறேன்.', 'needs': 'உங்களுக்கு என்ன தேவை? பொருந்தும் அனைத்தையும் தேர்ந்தெடுங்கள்.', 'current_spend': "இன்று இணையத்துக்கு எதைப் பயன்படுத்துகிறீர்கள், இணையம் மற்றும் மொபைலுக்கு மாதம் சுமார் எவ்வளவு செலுத்துகிறீர்கள்? உதாரணம்: 'ஹாட்ஸ்பாட், 900'. விரும்பினால் தவிர்க்கலாம்.", 'spend_followup': 'இணையம் மற்றும் மொபைலுக்கு மாதம் சுமார் எவ்வளவு செலுத்துகிறீர்கள்? விரும்பினால் தவிர்க்கலாம்.'}.items():
+    Q[_slot]['ta'] = _text
+NEED_LABELS['ta'] = {'internet': 'இணையம்', 'mobile': 'மொபைல் இணைப்புகள்', 'billing_pos': 'பில்லிங் / POS', 'whatsapp': 'வாட்ஸ்அப் பிசினஸ்', 'sms': 'SMS அறிவிப்புகள்', 'email_cloud': 'பிசினஸ் மின்னஞ்சல்', 'security': 'சாதனப் பாதுகாப்பு', 'cctv': 'CCTV கேமரா', 'telephony': 'கிளவுட் அழைப்பு / IVR', 'wifi': 'விருந்தினர் Wi-Fi', 'iot': 'இயந்திரக் கண்காணிப்பு', 'tracking': 'வாகனக் கண்காணிப்பு', 'website': 'இணையதளம்'}
+T['ta'] = {'yes': 'ஆம்', 'no': 'இல்லை', 'unsure': 'தெரியவில்லை', 'skip': 'தவிர்', 'done': 'முடிந்தது', 'injection': 'விலைகளை மாற்றவோ, சரிபார்ப்புகளைத் தவிர்க்கவோ, தள்ளுபடி தரவோ என்னால் முடியாது. ஒவ்வொரு விலையும் Accel Business பட்டியலிலிருந்து வருகிறது. தொடரலாம்.', 'human': 'நிச்சயமாக. ஒரு பார்ட்னர் உங்களை அழைப்பார்; நீங்கள் சொன்னது அவருக்குத் தெரியும், மீண்டும் சொல்ல வேண்டியதில்லை.', 'not_sold': 'நாங்கள் {item} விற்பதில்லை. அருகிலுள்ள விருப்பங்கள்: {alts}.', 'not_sold_plain': 'நாங்கள் {item} விற்பதில்லை; Accel Business பட்டியலில் உள்ளவை மட்டுமே வழங்க முடியும்.', 'gst_found': 'உங்கள் GSTIN {masked} கிடைத்தது: {name}, {city}. நிலை: {status}.', 'gst_not_found': 'அந்த GSTIN கிடைக்கவில்லை: {hint}', 'gst_inactive': ' உங்கள் GSTIN {status} நிலையில் உள்ளது; GST தேவைப்படும் தயாரிப்புகளைத் திறக்கும் வழி காட்டப்படும்.', 'got': 'புரிந்தது: {facts}.', 'plan_ready': "உங்கள் திட்டம் தயார். மூன்று விருப்பங்களையும் பார்க்க 'என் திட்டம்' அழுத்துங்கள்."}
+SETUP_LABEL_TA = {'Mobile hotspot': 'மொபைல் ஹாட்ஸ்பாட்', 'Home broadband': 'வீட்டு பிராட்பேண்ட்', 'Business broadband': 'பிசினஸ் பிராட்பேண்ட்', 'Leased line': 'லீஸ்டு லைன்', 'Mixed per site': 'கிளைக்கு கிளை வேறு', 'None': 'இன்னும் இல்லை'}

@@ -80,17 +80,20 @@ export default function Home() {
         <p className="mt-3 text-[16px] leading-relaxed text-ink-soft">{t.heroSub}</p>
         {flow.partnerToken && (
           <p className="mt-3 rounded-lg bg-brand-light px-3 py-2 text-sm text-brand-ring">
-            You were invited by an Accel partner. They are credited for anything you buy here.
+            {t.invited}
           </p>
         )}
       </div>
 
       <div className="mt-6 space-y-3">
         <Button onClick={startChat} disabled={busy} className="w-full text-[16px]">{t.chat} →</Button>
+        <Link to="/whatsapp" className="flex min-h-[44px] w-full items-center justify-center gap-2 rounded-xl border border-[#00A884]/60 text-[15px] font-semibold text-[#25D366] hover:bg-[#00A884]/10">
+          💬 {t.whatsapp}
+        </Link>
         <Card>
           <form onSubmit={startGstin} className="space-y-2">
             <label htmlFor="gstin" className="block text-[15px] font-semibold">{t.gstinFirst}</label>
-            <p className="text-sm text-ink-soft">We fill in your business name, city and GST status from the (mock) registry.</p>
+            <p className="text-sm text-ink-soft">{t.gstinHelp}</p>
             <div className="flex gap-2">
               <input id="gstin" value={gstin} onChange={(e) => setGstin(e.target.value)} maxLength={15}
                 placeholder={t.gstinPlaceholder} autoComplete="off"
@@ -104,22 +107,22 @@ export default function Home() {
 
       {flow.sessionId && (
         <Card className="mt-4">
-          <p className="text-sm text-ink-soft">Pick up where you left off</p>
+          <p className="text-sm text-ink-soft">{t.resume}</p>
           <div className="mt-2 flex flex-wrap gap-2">
-            <Link to="/advise" className="rounded-lg bg-surface-3 px-3 py-2 text-sm font-medium">Advisor</Link>
-            <Link to="/plan" className="rounded-lg bg-surface-3 px-3 py-2 text-sm font-medium">Plan</Link>
-            {flow.quoteId && <Link to="/quote" className="rounded-lg bg-surface-3 px-3 py-2 text-sm font-medium">Quote</Link>}
-            <Link to="/kyc" className="rounded-lg bg-surface-3 px-3 py-2 text-sm font-medium">KYC</Link>
-            {flow.orderId && <Link to={`/track/${flow.orderId}`} className="rounded-lg bg-surface-3 px-3 py-2 text-sm font-medium">Track</Link>}
-            <button onClick={reset} className="rounded-lg px-3 py-2 text-sm text-bad">Start over</button>
+            <Link to="/advise" className="rounded-lg bg-surface-3 px-3 py-2 text-sm font-medium">{t.steps.advisor}</Link>
+            <Link to="/plan" className="rounded-lg bg-surface-3 px-3 py-2 text-sm font-medium">{t.steps.plan}</Link>
+            {flow.quoteId && <Link to="/quote" className="rounded-lg bg-surface-3 px-3 py-2 text-sm font-medium">{t.steps.quote}</Link>}
+            <Link to="/kyc" className="rounded-lg bg-surface-3 px-3 py-2 text-sm font-medium">{t.steps.kyc}</Link>
+            {flow.orderId && <Link to={`/track/${flow.orderId}`} className="rounded-lg bg-surface-3 px-3 py-2 text-sm font-medium">{t.steps.track}</Link>}
+            <button onClick={reset} className="rounded-lg px-3 py-2 text-sm text-bad">{t.startOver}</button>
           </div>
         </Card>
       )}
 
       <div className="mt-8 grid grid-cols-3 gap-2 text-center text-[13px] text-ink-soft">
-        <div className="rounded-xl bg-surface p-3 shadow-card"><div className="text-lg">💬</div>Plan in 2 minutes</div>
-        <div className="rounded-xl bg-surface p-3 shadow-card"><div className="text-lg">📄</div>KYC on your phone</div>
-        <div className="rounded-xl bg-surface p-3 shadow-card"><div className="text-lg">📍</div>Track, no calls</div>
+        <div className="rounded-xl bg-surface p-3 shadow-card"><div className="text-lg">💬</div>{t.tile1}</div>
+        <div className="rounded-xl bg-surface p-3 shadow-card"><div className="text-lg">📄</div>{t.tile2}</div>
+        <div className="rounded-xl bg-surface p-3 shadow-card"><div className="text-lg">📍</div>{t.tile3}</div>
       </div>
       <p className="mt-8 text-center text-xs text-ink-faint">{t.synthetic}</p>
       <p className="mt-2 text-center text-xs"><Link to="/partner" className="text-brand-ring underline">{t.partner}</Link></p>

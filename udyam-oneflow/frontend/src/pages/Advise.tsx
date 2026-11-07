@@ -107,14 +107,14 @@ export default function Advise() {
   }
 
   const chips: { key: string; label: string; value: string }[] = profile ? [
-    { key: "business_type", label: "Business", value: profile.business_type || "?" },
-    { key: "city", label: "City", value: profile.city || "?" },
-    { key: "employees", label: "Staff", value: profile.employees?.toString() || "?" },
-    { key: "sites", label: "Sites", value: (profile.sites || 1).toString() },
-    { key: "has_gstin", label: "GST", value: profile.gstin_status || (profile.has_gstin === null ? "?" : profile.has_gstin ? "Yes" : "No") },
-    { key: "needs", label: "Needs", value: profile.needs.length ? profile.needs.map((n) => NEED_LABEL[n] || n).join(", ") : "?" },
-    { key: "current_internet", label: "Today", value: profile.current_internet === "None" ? "Nothing yet" : profile.current_internet || "?" },
-    { key: "current_spend_inr", label: "Pay today", value: profile.current_spend_inr ? inr(profile.current_spend_inr) : "?" },
+    { key: "business_type", label: t.chips.business_type, value: profile.business_type || "?" },
+    { key: "city", label: t.chips.city, value: profile.city || "?" },
+    { key: "employees", label: t.chips.employees, value: profile.employees?.toString() || "?" },
+    { key: "sites", label: t.chips.sites, value: (profile.sites || 1).toString() },
+    { key: "has_gstin", label: t.chips.has_gstin, value: profile.gstin_status || (profile.has_gstin === null ? "?" : profile.has_gstin ? t.yes : t.no) },
+    { key: "needs", label: t.chips.needs, value: profile.needs.length ? profile.needs.map((n) => NEED_LABEL[n] || n).join(", ") : "?" },
+    { key: "current_internet", label: t.chips.current_internet, value: profile.current_internet === "None" ? t.nothingYet : profile.current_internet || "?" },
+    { key: "current_spend_inr", label: t.chips.current_spend_inr, value: profile.current_spend_inr ? inr(profile.current_spend_inr) : "?" },
   ] : [];
 
   return (
@@ -139,7 +139,7 @@ export default function Advise() {
           <div key={i} className={`flex ${m.role === "user" ? "justify-end" : "justify-start"}`}>
             <div className={`max-w-[85%] whitespace-pre-line rounded-2xl px-4 py-2.5 text-[15px] leading-relaxed ${m.role === "user" ? "rounded-br-sm bg-brand text-white" : "rounded-bl-sm border border-line bg-surface"}`}>
               {m.text}
-              {m.source === "llm" && <span className="mt-1 block text-[11px] text-ink-faint">Worded by AI · every price checked against the catalogue</span>}
+              {m.source === "llm" && <span className="mt-1 block text-[11px] text-ink-faint">{t.aiWorded}</span>}
             </div>
           </div>
         ))}
@@ -186,7 +186,7 @@ export default function Advise() {
       </StickyBar>
       {hasPlan && (
         <form className="mt-4 flex gap-2" onSubmit={(e) => { e.preventDefault(); send(text); }}>
-          <input value={text} onChange={(e) => setText(e.target.value)} placeholder="Change something? e.g. 'add CCTV'"
+          <input value={text} onChange={(e) => setText(e.target.value)} placeholder={t.changeSomething}
             className="min-h-[44px] min-w-0 flex-1 rounded-xl border border-line-strong px-3 text-[15px]" />
           <Button type="submit" variant="secondary" disabled={!text.trim()}>{t.send}</Button>
         </form>
@@ -199,11 +199,6 @@ function EditChip({ field, profile, onSave, onCancel }: {
   field: string; profile: Profile; onSave: (f: string, v: string) => void; onCancel: () => void;
 }) {
   const { t } = useI18n();
-  const title: Record<string, string> = {
-    business_type: "Business type", city: "City", employees: "Staff (including you)", sites: "Number of locations",
-    has_gstin: "GST registration", needs: "What you need", current_spend_inr: "What you pay today (₹/month)",
-    current_internet: "Internet you use today",
-  };
   const initial: Record<string, string> = {
     business_type: profile.business_type || "", city: profile.city || "", employees: profile.employees?.toString() || "",
     sites: (profile.sites || 1).toString(),
@@ -217,18 +212,18 @@ function EditChip({ field, profile, onSave, onCancel }: {
   const toggleNeed = (n: string) => setV((picked.includes(n) ? picked.filter((x) => x !== n) : [...picked, n]).join(","));
   return (
     <div className="mb-3 rounded-2xl border border-brand/30 bg-surface p-3 shadow-card">
-      <label className="text-sm font-semibold" htmlFor="edit">{t.edit}: {title[field] || field}</label>
+      <label className="text-sm font-semibold" htmlFor="edit">{t.edit}: {t.editTitles[field] || field}</label>
       {field === "current_internet" ? (
         <select id="edit" value={v} onChange={(e) => setV(e.target.value)} className="mt-1 min-h-[44px] w-full rounded-xl border border-line-strong px-3">
-          <option value="" disabled>Choose…</option>
+          <option value="" disabled>{t.choose}</option>
           {["Mobile hotspot", "Home broadband", "Business broadband", "Leased line", "Mixed per site"].map((o) => <option key={o} value={o}>{o}</option>)}
-          <option value="None">Nothing yet</option>
+          <option value="None">{t.nothingYet}</option>
         </select>
       ) : field === "has_gstin" ? (
         <select id="edit" value={v} onChange={(e) => setV(e.target.value)} className="mt-1 min-h-[44px] w-full rounded-xl border border-line-strong px-3">
-          <option value="" disabled>Choose…</option>
-          <option value="yes">Yes, I have a GSTIN</option>
-          <option value="no">No GSTIN</option>
+          <option value="" disabled>{t.choose}</option>
+          <option value="yes">{t.yesGstin}</option>
+          <option value="no">{t.noGstin}</option>
         </select>
       ) : field === "needs" ? (
         <div className="mt-2 flex flex-wrap gap-2" role="group" aria-label="What you need">

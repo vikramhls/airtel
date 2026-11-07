@@ -29,7 +29,7 @@ class GstinFirstIn(BaseModel):
 
 @router.post("/session")
 def create_session(body: SessionIn):
-    lang = body.lang if body.lang in ("en", "hi") else "en"
+    lang = body.lang if body.lang in ("en", "hi", "ta") else "en"
     out = sessions.create(lang, body.partner_token)
     return {**out, **advisor.greeting(lang)}
 

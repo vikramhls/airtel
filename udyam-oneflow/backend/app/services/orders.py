@@ -12,7 +12,7 @@ import string
 from datetime import date, timedelta
 
 from app import config, db
-from app.services import catalogue, quotes, sessions
+from app.services import catalogue, checkout, quotes, sessions
 from app.services.kyc import service as kyc_service
 from app.utils.dates import add_working_days, iso
 
@@ -94,7 +94,8 @@ def create(session_id: str, quote_id: str) -> dict:
 
     order_date = config.REFERENCE_DATE
     lines = [{"product_id": i["product_id"], "name": i["name"], "qty": i["qty"],
-              "install_days": i["install_days"], "monthly": i["unit_price"] * i["qty"]} for i in quote["items"]]
+              "install_days": i["install_days"], "monthly": i["unit_price"] * i["qty"],
+              "setup": i.get("setup_inr", 0)} for i in quote["items"]]
     if kyc and kyc.get("state") == "green":
         kyc_mode, kyc_days = "instant", config.KYC_SLA_DAYS_INSTANT
     elif kyc and kyc.get("ready_for_order"):
@@ -102,7 +103,8 @@ def create(session_id: str, quote_id: str) -> dict:
     else:
         kyc_mode, kyc_days = "recheck", config.KYC_SLA_DAYS_AUTO
     data = {"order_date": order_date.isoformat(), "clock_days": 0, "lines": lines, "kyc_days": kyc_days,
-            "kyc_mode": kyc_mode, "block": None, "last_status": {}, "partner_task": None}
+            "kyc_mode": kyc_mode, "block": None, "last_status": {}, "partner_task": None,
+            "checkout": checkout.status(quote_id), "contract_months": quote["contract_months"]}
 
     status = (profile.gstin_status or "").lower()
     if status in {"cancelled", "suspended"} and _gst_required(lines):
@@ -178,13 +180,36 @@ def _view(row: dict, data: dict) -> dict:
         "lines": lines, "monthly_total": sum(l["monthly"] for l in data["lines"]),
         "notifications": notes, "partner_task": data.get("partner_task"),
         "eta_formula": "order date + KYC SLA + processing + max(install days), working days (Sundays skipped)",
+        "checkout": data.get("checkout"),
+        "bill": _bill(row["id"], row["partner_id"], data, ms["activated"]),
+    }
+
+
+SUPPORT_NUMBER = "1800-000-0000"   # fictional
+
+
+def _bill(order_id: str, partner_id: str | None, data: dict, activated: date) -> dict:
+    """One bill and one support number for every service in the order (case brief)."""
+    monthly = sum(l["monthly"] for l in data["lines"])
+    setup = sum(l.get("setup", 0) for l in data["lines"])
+    first = activated + timedelta(days=30)
+    return {
+        "account_no": "ACC-" + order_id.split("-")[-1],
+        "lines": [{"name": l["name"], "qty": l["qty"], "monthly": l["monthly"], "setup": l.get("setup", 0)}
+                  for l in data["lines"]],
+        "monthly_total": monthly, "one_time_setup": setup,
+        "first_bill_date": iso(first), "first_bill_amount": monthly + setup,
+        "contract_months": data.get("contract_months"),
+        "support": {"phone": SUPPORT_NUMBER + " (fictional)", "whatsapp": SUPPORT_NUMBER + " (simulated)",
+                    "account_manager": f"Partner {partner_id}" if partner_id else "Accel Business care team"},
+        "note": "One bill and one support number for all your services. Taxes as applicable.",
     }
 
 
 MESSAGES = {
     "kyc": "Documents verified. Next: we reserve your installation slot.",
     "processing": "Order processed. Installation booked for {date}, 10am-1pm.",
-    "activated": "You're live! Your single support number: 1800-000-0000 (fictional).",
+    "activated": "You're live! One bill for everything, one support number: 1800-000-0000 (fictional).",
 }
 
 

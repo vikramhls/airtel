@@ -154,5 +154,11 @@ def complete(system: str, user: str, *, image: bytes | None = None, as_json: boo
     return None
 
 
+def warmup() -> None:
+    """Open the provider connection at startup so the owner's first message isn't the slow one."""
+    if enabled():
+        complete("Reply with the single word OK.", "ping", max_tokens=5)
+
+
 def complete_json(system: str, user: str, *, image: bytes | None = None, max_tokens: int = 1024) -> dict | None:
     return parse_json(complete(system, user, image=image, as_json=True, max_tokens=max_tokens))

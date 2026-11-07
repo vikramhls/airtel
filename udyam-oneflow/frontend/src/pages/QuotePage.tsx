@@ -41,7 +41,12 @@ export default function QuotePage() {
   return (
     <Shell back="/plan">
       <h1 className="text-xl font-bold">{t.quote}</h1>
-      <p className="text-sm text-ink-soft">One monthly price. Change anything below and the total updates.</p>
+      <p className="text-sm text-ink-soft">{t.quoteSub}</p>
+      <div className="mt-3 grid grid-cols-3 gap-2 text-center text-[12px]">
+        <div className="rounded-xl border border-line bg-surface p-2"><div className="text-base">🧾</div>{t.oneBill}</div>
+        <div className="rounded-xl border border-line bg-surface p-2"><div className="text-base">📞</div>{t.oneSupport}</div>
+        <div className="rounded-xl border border-line bg-surface p-2"><div className="text-base">🔁</div>{t.autopayAny}</div>
+      </div>
       {toast && <div className="mt-3"><Banner tone="info">{toast}</Banner></div>}
 
       <Card className="mt-3">
@@ -62,7 +67,7 @@ export default function QuotePage() {
                   <span className="w-8 text-center text-sm">{i.qty}</span>
                   <button className="h-9 w-9 text-lg" disabled={busy} onClick={() => act("/quote/qty", { product_id: i.product_id, qty: i.qty + 1 })} aria-label="More">+</button>
                 </div>
-                <button className="ml-auto text-sm text-bad" disabled={busy} onClick={() => act("/quote/toggle", { product_id: i.product_id, on: false })}>Remove</button>
+                <button className="ml-auto text-sm text-bad" disabled={busy} onClick={() => act("/quote/toggle", { product_id: i.product_id, on: false })}>{t.remove}</button>
               </div>
             </li>
           ))}
@@ -77,9 +82,9 @@ export default function QuotePage() {
               <li key={a.product_id} className="flex items-center gap-3">
                 <div className="min-w-0 flex-1">
                   <p className="text-[15px] font-medium">{a.name}</p>
-                  <p className="text-xs text-ink-faint">{inr(a.unit_price)} {a.unit}{a.needs.length ? " · needs internet (we add it if missing)" : ""}</p>
+                  <p className="text-xs text-ink-faint">{inr(a.unit_price)} {a.unit}{a.needs.length ? ` · ${t.needsInternet}` : ""}</p>
                 </div>
-                <Button variant="secondary" disabled={busy} onClick={() => act("/quote/toggle", { product_id: a.product_id, on: true })}>+ Add</Button>
+                <Button variant="secondary" disabled={busy} onClick={() => act("/quote/toggle", { product_id: a.product_id, on: true })}>{t.add}</Button>
               </li>
             ))}
           </ul>
@@ -103,8 +108,8 @@ export default function QuotePage() {
           <div className="flex justify-between"><dt>{t.expected}</dt><dd>{q.expected_activation_date || "–"}</dd></div>
           {q.vs_current_spend && <div className="flex justify-between text-ink-soft"><dt>{t.vsToday}</dt><dd>{q.vs_current_spend}×</dd></div>}
         </dl>
-        {q.over_budget_by ? <p className="mt-2 text-sm font-medium text-warn">Over your budget by {inr(q.over_budget_by)}</p> : null}
-        <p className="mt-2 text-xs text-ink-faint">{q.pricing_note} Contract = longest line term.</p>
+        {q.over_budget_by ? <p className="mt-2 text-sm font-medium text-warn">{t.overBudget} {inr(q.over_budget_by)}</p> : null}
+        <p className="mt-2 text-xs text-ink-faint">{t.whySource} {t.contractNote}</p>
       </Card>
 
       <label className="mt-4 flex items-start gap-3 text-[14px]">
@@ -116,7 +121,7 @@ export default function QuotePage() {
       <StickyBar>
         <div className="min-w-0 flex-1">
           <div className="text-lg font-bold">{inr(q.total_monthly)}<span className="text-sm font-normal text-ink-soft">{t.perMonth}</span></div>
-          <div className="text-xs text-ink-soft">+ {inr(q.total_setup)} setup</div>
+          <div className="text-xs text-ink-soft">+ {inr(q.total_setup)} {t.setup.toLowerCase()}</div>
         </div>
         <Button disabled={!agree || !q.items.length} onClick={() => nav("/kyc")}>{t.continueKyc} →</Button>
       </StickyBar>

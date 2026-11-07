@@ -3,12 +3,8 @@ import { Link, useNavigate } from "react-router-dom";
 import { api, type Quote, type Recommendation, type Rung, type UnlockPath } from "../api/client";
 import { Banner, Button, Card, ErrorBox, Pill, Shell, Spinner, StickyBar } from "../components/ui";
 import { inr, useFlow } from "../hooks/useSession";
-import { useI18n } from "../i18n";
+import { fill, useI18n } from "../i18n";
 
-const RULE_TEXT: Record<string, string> = {
-  city_tier: "sold in your city", employees: "fits your team size", sites: "fits your number of locations",
-  gstin: "GST rule satisfied", segment_fit: "typical for your kind of business",
-};
 const BLOCK_ICON: Record<string, string> = {
   gstin_missing: "🧾", gstin_cancelled: "🧾", gstin_suspended: "🧾", employees: "👥", sites: "🏬", city_tier: "📍", dependency: "🔌",
 };
@@ -76,7 +72,7 @@ export default function Plan() {
   return (
     <Shell back="/advise">
       <h1 className="text-xl font-bold">{t.yourPlan}</h1>
-      <p className="text-sm text-ink-soft">Three ways to start. Every price is {t.fromCatalogue}.</p>
+      <p className="text-sm text-ink-soft">{t.planSub}</p>
 
       <div className="mt-3 flex rounded-xl bg-surface-3 p-1" role="tablist">
         {rec.ladder.map((r, i) => (
@@ -141,21 +137,21 @@ function RungCard({ rung, prev, anchor, term }: { rung: Rung; prev: Set<string>;
         <span className="text-ink-soft">{t.perMonth}</span>
       </div>
       <p className="mt-1 text-xs text-ink-faint">
-        {t.band} {inr(rung.total_monthly_range[0])}–{inr(rung.total_monthly_range[1])}; you pay {inr(rung.total_monthly)} on a {term}-month term.
+        {fill(t.bandNote, { lo: inr(rung.total_monthly_range[0]), hi: inr(rung.total_monthly_range[1]), p: inr(rung.total_monthly), m: term })}
       </p>
       <div className="mt-3 grid grid-cols-3 gap-2 text-center text-[13px]">
         <div className="rounded-xl bg-surface-3 p-2"><div className="font-semibold">{inr(rung.total_setup)}</div><div className="text-ink-faint">{t.setup}</div></div>
         <div className="rounded-xl bg-surface-3 p-2"><div className="font-semibold">{rung.contract_months} {t.months}</div><div className="text-ink-faint">{t.contract}</div></div>
-        <div className="rounded-xl bg-surface-3 p-2"><div className="font-semibold">{rung.install_days} {t.days.split(" ")[0]}</div><div className="text-ink-faint">to go live</div></div>
+        <div className="rounded-xl bg-surface-3 p-2"><div className="font-semibold">{rung.install_days} {t.days.split(" ")[0]}</div><div className="text-ink-faint">{t.toGoLive}</div></div>
       </div>
       {ratio !== null && anchor && (
         <p className={`mt-3 rounded-lg px-3 py-2 text-[14px] ${ratio <= 1.5 ? "bg-good-bg text-good" : "bg-surface-3 text-ink-soft"}`}>
-          {ratio <= 1.5 ? "Starts near what you pay today: " : "More than you pay today because it adds services: "}
+          {ratio <= 1.5 ? t.nearToday : t.moreToday}{" "}
           <b>{ratio}×</b> of {inr(anchor)}
         </p>
       )}
-      {sameAsPrev && <p className="mt-2 text-[13px] text-ink-soft">Your Start plan already covers what businesses like yours usually add at this step.</p>}
-      {rung.over_budget_by ? <p className="mt-2 text-sm font-medium text-warn">Over your budget by {inr(rung.over_budget_by)}</p> : null}
+      {sameAsPrev && <p className="mt-2 text-[13px] text-ink-soft">{t.coversGrow}</p>}
+      {rung.over_budget_by ? <p className="mt-2 text-sm font-medium text-warn">{t.overBudget} {inr(rung.over_budget_by)}</p> : null}
       <ul className="mt-3 divide-y divide-line">
         {rung.items.map((i) => (
           <li key={i.product_id} className="py-2.5">
@@ -163,8 +159,8 @@ function RungCard({ rung, prev, anchor, term }: { rung: Rung; prev: Set<string>;
               <div className="min-w-0">
                 <p className="font-medium">
                   {i.name} {i.qty > 1 && <span className="text-ink-soft">× {i.qty}</span>}{" "}
-                  {i.is_addon && <Pill tone="brand">Suggested</Pill>}{" "}
-                  {prev.size > 0 && !prev.has(i.product_id) && <Pill tone="good">New</Pill>}
+                  {i.is_addon && <Pill tone="brand">{t.suggested}</Pill>}{" "}
+                  {prev.size > 0 && !prev.has(i.product_id) && <Pill tone="good">{t.isNew}</Pill>}
                 </p>
                 <p className="mt-0.5 text-[13px] leading-snug text-ink-soft">{i.why}</p>
               </div>
@@ -183,33 +179,34 @@ function RungCard({ rung, prev, anchor, term }: { rung: Rung; prev: Set<string>;
 }
 
 function WhyPanel({ rec, rung }: { rec: Recommendation; rung: Rung }) {
+  const { t } = useI18n();
   const rules = new Map(rec.trace.rules.map((r) => [r.product, r]));
   return (
     <div className="mt-3 space-y-3 text-[14px]">
-      <p>Your business was matched to the <b>{rec.trace.segment}</b> segment. Prices use the catalogue policy:
-        12-month term = middle of the price band, 24 months = bottom of the band.</p>
+      <p>{fill(t.whyIntro, { seg: rec.trace.segment })}</p>
       <ul className="space-y-2">
         {rung.items.map((i) => {
           const r = rules.get(i.product_id);
           return (
             <li key={i.product_id} className="rounded-lg bg-surface-3 p-2">
-              <b>{i.name}</b>: {(r?.passed || i.rules_passed).map((x) => RULE_TEXT[x] || x).join(" · ")}
+              <b>{i.name}</b>: {(r?.passed || i.rules_passed).map((x) => t.rules[x] || x).join(" · ")}
             </li>
           );
         })}
       </ul>
       {rec.trace.auto_added.map((a) => (
         <p key={a.product} className="rounded-lg bg-brand-light p-2 text-brand-ring">
-          Added <b>{a.name}</b> once because {a.reason.replace(/requires one of .*/, "needs a base internet connection")}.
+          {fill(t.whyAdded, { name: a.name })}
         </p>
       ))}
-      {rec.trace.budget_swap && <p className="text-ink-soft">To keep close to your budget we used the cheapest connection that works.</p>}
-      <p className="text-xs text-ink-faint">Source: product_catalogue.csv · rules engine (the AI never sets prices).</p>
+      {rec.trace.budget_swap && <p className="text-ink-soft">{t.whyBudget}</p>}
+      <p className="text-xs text-ink-faint">{t.whySource}</p>
     </div>
   );
 }
 
 function UnlockCard({ u, onPartner, onGstin }: { u: UnlockPath; onPartner: () => void; onGstin: (g: string) => Promise<void> }) {
+  const { t } = useI18n();
   const gst = u.blocked_by.startsWith("gstin");
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState("");
@@ -219,28 +216,28 @@ function UnlockCard({ u, onPartner, onGstin }: { u: UnlockPath; onPartner: () =>
       <div className="flex items-start gap-2">
         <span className="text-lg" aria-hidden>{BLOCK_ICON[u.blocked_by] || "🔒"}</span>
         <div className="min-w-0 flex-1">
-          <p className="font-semibold">{u.name} {u.needed && <Pill tone="warn">You asked</Pill>}</p>
+          <p className="font-semibold">{u.name} {u.needed && <Pill tone="warn">{t.youAsked}</Pill>}</p>
           <p className="mt-0.5 text-[14px] leading-snug">{u.message}</p>
-          <p className="mt-1 text-xs text-ink-soft">Adds {inr(u.adds_per_month[0])}–{inr(u.adds_per_month[1])}/month · {u.unlock_action}</p>
+          <p className="mt-1 text-xs text-ink-soft">{t.adds} {inr(u.adds_per_month[0])}–{inr(u.adds_per_month[1])}{t.perMonth}</p>
           {gst ? (
             <div className="mt-2 space-y-2">
               <div className="flex flex-wrap gap-2">
                 {u.blocked_by === "gstin_missing" && (
-                  <button onClick={() => setOpen(!open)} className="rounded-lg bg-surface px-3 py-2 text-sm font-semibold text-brand-ring ring-1 ring-brand/40">Add GSTIN</button>
+                  <button onClick={() => setOpen(!open)} className="rounded-lg bg-surface px-3 py-2 text-sm font-semibold text-brand-ring ring-1 ring-brand/40">{t.addGstin}</button>
                 )}
-                <button onClick={onPartner} className="rounded-lg px-3 py-2 text-sm font-semibold text-brand-ring">Get GST help from a partner</button>
+                <button onClick={onPartner} className="rounded-lg px-3 py-2 text-sm font-semibold text-brand-ring">{t.gstHelp}</button>
               </div>
               {open && (
                 <form className="flex gap-2" onSubmit={(e) => { e.preventDefault(); setErr(null); onGstin(value).catch(setErr); }}>
                   <input value={value} onChange={(e) => setValue(e.target.value)} maxLength={15} aria-label="GSTIN" placeholder="15-character GSTIN"
                     className="min-h-[40px] min-w-0 flex-1 rounded-lg border border-line-strong px-2 font-mono uppercase" />
-                  <Button type="submit" disabled={value.trim().length !== 15}>Check</Button>
+                  <Button type="submit" disabled={value.trim().length !== 15}>{t.check}</Button>
                 </form>
               )}
               {err ? <ErrorBox error={err} /> : null}
             </div>
           ) : u.alternative_name ? (
-            <p className="mt-2 text-sm">Closest fit today: <b>{u.alternative_name}</b></p>
+            <p className="mt-2 text-sm">{t.closestFit} <b>{u.alternative_name}</b></p>
           ) : null}
         </div>
       </div>

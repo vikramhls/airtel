@@ -8,11 +8,11 @@ export function Shell({ children, title, back }: { children: ReactNode; title?: 
   const { lang, setLang, t } = useI18n();
   const loc = useLocation();
   const steps = [
-    { path: "/advise", label: "Advisor" },
-    { path: "/plan", label: "Plan" },
-    { path: "/quote", label: "Quote" },
-    { path: "/kyc", label: "KYC" },
-    { path: "/track", label: "Track" },
+    { path: "/advise", label: t.steps.advisor },
+    { path: "/plan", label: t.steps.plan },
+    { path: "/quote", label: t.steps.quote },
+    { path: "/kyc", label: t.steps.kyc },
+    { path: "/track", label: t.steps.track },
   ];
   const active = steps.findIndex((s) => loc.pathname.startsWith(s.path));
   return (
@@ -27,10 +27,10 @@ export function Shell({ children, title, back }: { children: ReactNode; title?: 
             <span className="text-[15px]">{title || t.appName}</span>
           </Link>
           <div className="ml-auto flex rounded-full border border-line p-0.5 text-sm" role="group" aria-label="Language">
-            {(["en", "hi"] as const).map((l) => (
+            {(["en", "hi", "ta"] as const).map((l) => (
               <button key={l} onClick={() => setLang(l)}
                 className={`min-h-[32px] rounded-full px-3 ${lang === l ? "bg-brand text-white" : "text-ink-soft"}`}>
-                {l === "en" ? "EN" : "हिं"}
+                {{ en: "EN", hi: "हिं", ta: "த" }[l]}
               </button>
             ))}
           </div>

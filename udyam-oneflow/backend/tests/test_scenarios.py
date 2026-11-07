@@ -396,3 +396,91 @@ def test_upload_rejects_pdf_and_broken_images(client):
     bad = client.post("/api/kyc/upload", data={"session_id": sid, "doc_type": "gst"},
                       files={"file": ("cert.png", b"not an image", "image/png")})
     assert bad.status_code == 422 and bad.json()["code"] == "UNREADABLE_IMAGE"
+
+
+# ------------------------------------------------------------------ added: follow-up questions in chat
+BASE = ["Kirana store in Chennai, 4 staff", "no", "internet, mobile, cctv, billing_pos", "hotspot, 900"]
+
+
+def test_followup_why(llm_mode):
+    _, out = talk(BASE + ["why this plan?"])
+    assert out["intent"] == "ask_why" and "Biz Fibre 100" in out["reply"] and "catalogue" in out["reply"]
+
+
+def test_followup_price_does_not_change_plan(llm_mode):
+    sid, out = talk(BASE + ["how much is Fibre 300?"])
+    assert out["intent"] == "ask_price" and "₹1,649" in out["reply"] and "₹1,499" in out["reply"]
+    assert sessions.load_profile(sid).requested_products == []          # asking isn't buying
+    _, out = talk(BASE + ["how much does whatsapp api cost?"])
+    assert "needs a GSTIN" in out["reply"]
+
+
+def test_followup_what_if(llm_mode):
+    _, out = talk(BASE + ["what if I had GST?"])
+    assert "WhatsApp Business API Starter" in out["reply"] and "Business SMS 10k" in out["reply"]
+    _, out = talk(BASE + ["what if 24 months?"])
+    assert "₹3,192" in out["reply"]
+    sid, out = talk(BASE + ["what if we had 12 staff?"])
+    assert "₹4,641" in out["reply"] and sessions.load_profile(sid).employees == 4   # hypothetical only
+
+
+def test_followup_remove(llm_mode):
+    sid, out = talk(BASE + ["remove CCTV"])
+    assert out["intent"] == "change_choice" and "₹3,244" in out["reply"]
+    assert "cctv" not in sessions.load_profile(sid).needs
+    _, out = talk(BASE + ["remove internet"])
+    assert "can't come out" in out["reply"]                             # CCTV still needs it
+
+
+def test_followup_mid_questionnaire_repeats_question(llm_mode):
+    _, out = talk(["Kirana store in Chennai, 4 staff", "how much is cctv?"])
+    assert "Cloud CCTV" in out["reply"] and out["next_slot"] == "has_gstin"
+
+
+# ------------------------------------------------------------------ added: checkout, single bill, DigiLocker
+def test_checkout_esign_mandate_and_bill(client):
+    sid = client.post("/api/session", json={}).json()["session_id"]
+    client.post("/api/gstin-first", json={"session_id": sid, "gstin": "27PZSXS1936O1ZH"})   # K04's GSTIN
+    for m in ["5 staff", "internet, mobile", "skip"]:
+        client.post("/api/advisor/message", json={"session_id": sid, "text": m})
+    q = client.post("/api/quote", json={"session_id": sid, "rung": "Start", "term_months": 12}).json()
+    bad = client.post("/api/checkout/esign", json={"session_id": sid, "quote_id": q["quote_id"], "otp": "000000"})
+    assert bad.status_code == 422 and "123456" in bad.json()["fix_hint"]
+    assert client.post("/api/checkout/esign", json={"session_id": sid, "quote_id": q["quote_id"], "otp": "123456"}).json()["signed"]
+    assert client.post("/api/checkout/mandate", json={"session_id": sid, "quote_id": q["quote_id"],
+                                                      "handle": "nope"}).status_code == 422
+    m = client.post("/api/checkout/mandate", json={"session_id": sid, "quote_id": q["quote_id"], "handle": "owner@okbank"}).json()
+    assert m["status"] == "approved" and "owner" not in m["handle_masked"]
+    assert client.post("/api/kyc/digilocker", json={"session_id": sid, "otp": "123456"}).status_code == 403   # consent first
+    client.post("/api/consent", json={"session_id": sid})
+    d = client.post("/api/kyc/digilocker", json={"session_id": sid, "otp": "123456"}).json()
+    assert d["fetched"] == ["gst", "udyam", "address", "signatory_id"]
+    o = client.post("/api/orders", json={"session_id": sid, "quote_id": q["quote_id"]}).json()
+    assert o["checkout"]["complete"]
+    bill = o["bill"]
+    assert bill["monthly_total"] == q["total_monthly"] and bill["one_time_setup"] == q["total_setup"]
+    assert bill["first_bill_amount"] == q["total_monthly"] + q["total_setup"]
+    assert bill["support"]["phone"].startswith("1800") and bill["account_no"].startswith("ACC-")
+
+
+def test_digilocker_needs_a_gstin(client):
+    sid = client.post("/api/session", json={}).json()["session_id"]
+    client.post("/api/consent", json={"session_id": sid})
+    r = client.post("/api/kyc/digilocker", json={"session_id": sid, "otp": "123456"})
+    assert r.status_code == 404 and r.json()["fix_hint"]
+
+
+# ------------------------------------------------------------------ added: Tamil (regional language)
+def test_tamil_conversation(llm_mode):
+    sid, out = talk(["சென்னையில் எனக்கு மளிகை கடை உள்ளது, 4 பேர் வேலை செய்கிறார்கள்"], lang="ta")
+    profile = sessions.load_profile(sid)
+    assert (profile.business_type, profile.city, profile.employees) == ("Kirana store", "Chennai", 4)
+    assert out["lang"] == "ta" and out["next_slot"] == "has_gstin" and "GSTIN" in out["reply"]
+    assert [c["label"] for c in out["chips"]][:2] == ["ஆம்", "இல்லை"]
+    for msg in ["இல்லை", "internet, mobile, cctv", "ஹாட்ஸ்பாட், 900"]:
+        out = advisor.handle_message(sid, msg)
+    assert out["ladder"] and "மாதம்" in out["reply"]
+    out = advisor.handle_message(sid, "CCTV நீக்கு")
+    assert out["intent"] == "change_choice" and "நீக்கப்பட்டது" in out["reply"]
+    _, out = talk(["மதுரையில் மளிகை கடை, 3 பேர்"], lang="ta")
+    assert out["handoff"] == "city_not_served" and "சேவை வழங்கவில்லை" in out["reply"]

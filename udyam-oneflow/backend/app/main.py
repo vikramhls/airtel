@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import logging
+import threading
 
 from fastapi import FastAPI, Request
 from fastapi.exceptions import RequestValidationError
@@ -12,7 +13,7 @@ from starlette.exceptions import HTTPException as StarletteHTTPException
 
 from app import config, db
 from app.dataio import data_counts
-from app.routers import advisor, catalogue, kyc, orders, partner, quote
+from app.routers import advisor, catalogue, checkout, kyc, orders, partner, quote
 from app.services import llm, propensity
 from app.services.kyc import service as kyc_service
 
@@ -22,7 +23,7 @@ app = FastAPI(title="Udyam OneFlow API", version="1.0",
 app.add_middleware(CORSMiddleware, allow_origins=["http://localhost:5173", "http://127.0.0.1:5173"],
                    allow_methods=["*"], allow_headers=["*"])
 
-for module in (advisor, catalogue, quote, kyc, orders, partner):
+for module in (advisor, catalogue, quote, checkout, kyc, orders, partner):
     app.include_router(module.router, prefix="/api")
 
 
@@ -44,6 +45,15 @@ async def validation_problem(_: Request, exc: RequestValidationError):
 @app.on_event("startup")
 def startup() -> None:
     db.connect()
+
+    def warm() -> None:   # first LLM call and first model score are the slow ones; pay that cost now
+        try:
+            propensity.calibration()
+        except Exception:
+            logging.getLogger(__name__).warning("propensity warm-up skipped")
+        llm.warmup()
+
+    threading.Thread(target=warm, daemon=True).start()
 
 
 @app.get("/api/health")

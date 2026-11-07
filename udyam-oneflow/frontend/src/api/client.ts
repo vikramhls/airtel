@@ -111,4 +111,9 @@ export type Order = {
   lines: { product_id: string; name: string; qty: number; install_days: number; monthly: number; install_date: string }[];
   monthly_total: number; notifications: { body: string; sent_at: string }[]; partner_task: { message: string } | null;
   eta_formula: string; partner_id: string | null;
+  checkout?: { complete: boolean; esign: { document_hash: string } | null;
+    mandate: { mandate_id: string; method: string; handle_masked: string | null } | null } | null;
+  bill?: { account_no: string; lines: { name: string; qty: number; monthly: number; setup: number }[];
+    monthly_total: number; one_time_setup: number; first_bill_date: string; first_bill_amount: number;
+    contract_months: number | null; support: { phone: string; whatsapp: string; account_manager: string }; note: string };
 };

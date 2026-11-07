@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { api, type Check, type KycDoc, type KycReport, type Order, type Quote } from "../api/client";
+import { Checkout } from "../components/Checkout";
 import { Banner, Button, Card, ErrorBox, Pill, Shell, Spinner, StickyBar } from "../components/ui";
 import { inr, isDemo, useFlow } from "../hooks/useSession";
-import { useI18n } from "../i18n";
+import { fill, useI18n } from "../i18n";
 
 const DOCS: { type: string; label: string; hint: string }[] = [
   { type: "gst", label: "GST certificate", hint: "Registration certificate (REG-06)" },
@@ -35,6 +36,7 @@ export default function Kyc() {
   const [skipped, setSkipped] = useState(false);
   const [applicant, setApplicant] = useState(flow.kycApplicant || "K03");
   const [placing, setPlacing] = useState(false);
+  const [checkoutOpen, setCheckout] = useState(false);
   const demo = isDemo();
 
   async function refresh() {
@@ -128,10 +130,10 @@ export default function Kyc() {
           <h1 className="text-lg font-bold">🔒 {t.consentTitle}</h1>
           <p className="mt-2 text-[15px] leading-relaxed">{consent?.text}</p>
           <ul className="mt-3 space-y-1 text-[14px] text-ink-soft">
-            <li>• <b>Purpose:</b> verify your business for this order only.</li>
-            <li>• <b>What we read:</b> names, numbers, addresses and dates on 4 documents.</li>
-            <li>• <b>How long:</b> images deleted within {consent?.retention_days ?? 7} days or once verified.</li>
-            <li>• <b>Your control:</b> view, correct or delete anytime; withdraw consent from this screen.</li>
+            <li>• {t.consentPurpose}</li>
+            <li>• {t.consentWhat}</li>
+            <li>• {fill(t.consentHow, { d: consent?.retention_days ?? 7 })}</li>
+            <li>• {t.consentControl}</li>
           </ul>
           <div className="mt-4 flex gap-2">
             <Button onClick={agree}>{t.agree}</Button>
@@ -139,8 +141,8 @@ export default function Kyc() {
           </div>
           {skipped && (
             <div className="mt-3"><Banner tone="info">
-              No problem. You can still place the order: it will wait at the KYC step until you upload documents.
-              <button className="ml-1 font-semibold underline" onClick={placeOrder}>Place order anyway</button>
+              {t.skippedNote}
+              <button className="ml-1 font-semibold underline" onClick={placeOrder}>{t.placeAnyway}</button>
             </Banner></div>
           )}
         </Card>
@@ -160,7 +162,7 @@ export default function Kyc() {
         <div>
           <h1 className="text-xl font-bold">{t.kyc}</h1>
           <p className="text-sm text-ink-soft" aria-live="polite">{report.score.passed}/{report.score.total} {t.checksPassed}</p>
-          {report.next_action && <p className="mt-1 text-[14px] font-medium text-warn">Next: {report.next_action.label}</p>}
+          {report.next_action && <p className="mt-1 text-[14px] font-medium text-warn">{t.next} {report.next_action.label}</p>}
         </div>
       </div>
 
@@ -170,10 +172,10 @@ export default function Kyc() {
           <div className="mt-2 flex flex-wrap gap-2">
             <button className="rounded-lg bg-surface px-3 py-2 text-sm font-semibold ring-1 ring-warn-edge"
               onClick={() => api.post("/advisor/message", { session_id: flow.sessionId, text: "talk to a human about GST help" }).then(() => alert("A partner will call you to help reactivate your GSTIN (simulated)."))}>
-              Reactivate (a partner can help)
+              {t.reactivate}
             </button>
             <button className="rounded-lg bg-surface px-3 py-2 text-sm font-semibold ring-1 ring-warn-edge" onClick={dropGstProducts}>
-              Continue without GST-only products
+              {t.continueNoGst}
             </button>
           </div>
         </Banner></div>
@@ -181,14 +183,16 @@ export default function Kyc() {
 
       {demo && (
         <div className="mt-3 flex items-center gap-2 text-sm">
-          <label htmlFor="appl" className="text-ink-soft">Sample applicant</label>
+          <label htmlFor="appl" className="text-ink-soft">{t.sampleApplicant}</label>
           <select id="appl" value={applicant} onChange={(e) => { setApplicant(e.target.value); update({ kycApplicant: e.target.value }); }}
             className="rounded-lg border border-line-strong px-2 py-1">
             {APPLICANTS.map((a) => <option key={a}>{a}</option>)}
           </select>
-          <Button variant="ghost" onClick={async () => { for (const d of DOCS) await upload(d.type).catch(() => undefined); }}>Use all 4</Button>
+          <Button variant="ghost" onClick={async () => { for (const d of DOCS) await upload(d.type).catch(() => undefined); }}>{t.useAll}</Button>
         </div>
       )}
+
+      <DigiLocker sessionId={flow.sessionId} onFetched={refresh} />
 
       <div className="mt-4 space-y-3">
         {DOCS.map((d) => (
@@ -198,24 +202,72 @@ export default function Kyc() {
       </div>
 
       <Card className="mt-4">
-        <h2 className="font-semibold">Checks</h2>
+        <h2 className="font-semibold">{t.checksHeading}</h2>
         <ul className="mt-2 space-y-1.5">
           {report.checks.map((c) => <CheckRow key={c.code} c={c} />)}
         </ul>
       </Card>
       <div className="mt-3"><ErrorBox error={error} /></div>
       <div className="mt-4 flex flex-wrap gap-3 text-sm">
-        <button className="text-bad underline" onClick={deleteDocs}>Delete my documents</button>
-        <button className="text-ink-soft underline" onClick={async () => { await api.post("/consent/withdraw", { session_id: flow.sessionId }); refresh(); }}>Withdraw consent</button>
+        <button className="text-bad underline" onClick={deleteDocs}>{t.deleteDocs}</button>
+        <button className="text-ink-soft underline" onClick={async () => { await api.post("/consent/withdraw", { session_id: flow.sessionId }); refresh(); }}>{t.withdraw}</button>
       </div>
 
       <StickyBar>
         <p className="min-w-0 flex-1 text-xs text-ink-soft">
-          {report.ready_for_order ? "Ready. Warnings are reviewed by our team." : "You can order now; it waits at KYC until this is fixed."}
+          {report.ready_for_order ? t.readyNote : t.waitNote}
         </p>
-        <Button onClick={placeOrder} disabled={placing}>{t.placeOrder} →</Button>
+        <Button onClick={() => (flow.quoteId ? setCheckout(true) : placeOrder())} disabled={placing}>{t.placeOrder} →</Button>
       </StickyBar>
+      {checkoutOpen && flow.quoteId && (
+        <Checkout sessionId={flow.sessionId} quoteId={flow.quoteId} placing={placing}
+          onClose={() => setCheckout(false)} onDone={placeOrder} />
+      )}
     </Shell>
+  );
+}
+
+function DigiLocker({ sessionId, onFetched }: { sessionId: string; onFetched: () => void }) {
+  const { t } = useI18n();
+  const [open, setOpen] = useState(false);
+  const [otp, setOtp] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<unknown>(null);
+  const [done, setDone] = useState<string | null>(null);
+  async function fetchDocs(e: React.FormEvent) {
+    e.preventDefault();
+    setBusy(true); setError(null);
+    try {
+      const r = await api.post<{ fetched: string[]; missing: string[] }>("/kyc/digilocker", { session_id: sessionId, otp });
+      setDone(`Fetched ${r.fetched.length} document${r.fetched.length === 1 ? "" : "s"}` +
+        (r.missing.length ? `; not in DigiLocker: ${r.missing.join(", ")}. Upload ${r.missing.length === 1 ? "it" : "them"} below.` : "."));
+      setOpen(false);
+      onFetched();
+    } catch (err) {
+      setError(err);
+    } finally {
+      setBusy(false);
+    }
+  }
+  return (
+    <Card className="mt-4">
+      <div className="flex items-center justify-between gap-2">
+        <div>
+          <p className="font-semibold">{t.digiTitle} <Pill tone="warn">{t.simTag}</Pill></p>
+          <p className="text-xs text-ink-faint">{t.digiSub}</p>
+        </div>
+        {!open && <Button variant="secondary" onClick={() => setOpen(true)}>{t.fetch}</Button>}
+      </div>
+      {open && (
+        <form className="mt-3 flex gap-2" onSubmit={fetchDocs}>
+          <input value={otp} onChange={(e) => setOtp(e.target.value.replace(/\D/g, "").slice(0, 6))} inputMode="numeric"
+            aria-label="DigiLocker OTP" placeholder="OTP (demo: 123456)" className="min-h-[44px] min-w-0 flex-1 rounded-xl border border-line-strong px-3" />
+          <Button type="submit" disabled={busy || otp.length !== 6}>{busy ? t.fetching : t.verify}</Button>
+        </form>
+      )}
+      {done && <p className="mt-2 text-sm text-good">✓ {done}</p>}
+      <div className="mt-2"><ErrorBox error={error} /></div>
+    </Card>
   );
 }
 
@@ -233,13 +285,14 @@ function ReadinessRing({ passed, total, state }: { passed: number; total: number
 }
 
 function CheckRow({ c }: { c: Check }) {
+  const { t } = useI18n();
   const icon = c.status === "pass" ? "✓" : c.severity === "warning" ? "⚠" : "✕";
   const color = c.status === "pass" ? "text-good" : c.severity === "warning" ? "text-warn" : "text-bad";
   return (
     <li className="flex gap-2 text-[14px]">
       <span className={`w-4 shrink-0 font-bold ${color}`} aria-hidden>{icon}</span>
       <div className="min-w-0">
-        <span className="font-medium">{CHECK_LABEL[c.code] || c.code}</span>
+        <span className="font-medium">{t.checks[c.code] || CHECK_LABEL[c.code] || c.code}</span>
         {c.status === "fail" && <p className="text-[13px] text-ink-soft">{c.detail} {c.fix_hint && <b className={color}>→ {c.fix_hint}</b>}</p>}
       </div>
     </li>
@@ -259,10 +312,10 @@ function DocTile({ spec, doc, busy, onUpload, onCorrect, checks }: {
     <Card>
       <div className="flex items-center justify-between gap-2">
         <div>
-          <p className="font-semibold">{spec.label} {doc && !unreadable && <Pill tone="good">Read</Pill>} {unreadable && <Pill tone="bad">Blurry</Pill>}</p>
-          <p className="text-xs text-ink-faint">{spec.hint}</p>
+          <p className="font-semibold">{(t.docs[spec.type] || [spec.label])[0]} {doc && !unreadable && <Pill tone="good">{t.read}</Pill>} {unreadable && <Pill tone="bad">{t.blurry}</Pill>}</p>
+          <p className="text-xs text-ink-faint">{(t.docs[spec.type] || [, spec.hint])[1]}</p>
         </div>
-        {busy && <Spinner label="Reading…" />}
+        {busy && <Spinner label={t.reading} />}
       </div>
       {quality && <p className="mt-2 text-[13px] text-bad">{quality.fix_hint}</p>}
       {doc && !unreadable && (
@@ -277,8 +330,8 @@ function DocTile({ spec, doc, busy, onUpload, onCorrect, checks }: {
                 </dd>
               ) : (
                 <dd className="min-w-0 text-right">
-                  <span className={f.value ? "" : "italic text-bad"}>{f.masked_value || "blank"}</span>{" "}
-                  {f.confidence > 0 && f.confidence < 0.6 && <Pill tone="warn">check</Pill>}{" "}
+                  <span className={f.value ? "" : "italic text-bad"}>{f.masked_value || t.blank}</span>{" "}
+                  {f.confidence > 0 && f.confidence < 0.6 && <Pill tone="warn">{t.checkTag}</Pill>}{" "}
                   <button className="text-brand-ring" aria-label={`Edit ${f.label}`} onClick={() => { setEditing(key); setVal(f.value); }}>✎</button>
                 </dd>
               )}
@@ -288,7 +341,7 @@ function DocTile({ spec, doc, busy, onUpload, onCorrect, checks }: {
       )}
       <div className="mt-3 flex flex-wrap gap-2">
         <label className="inline-flex min-h-[40px] cursor-pointer items-center rounded-xl border border-brand px-3 text-sm font-semibold text-brand-ring hover:bg-brand-light">
-          📷 {doc ? "Re-upload" : t.upload}
+          📷 {doc ? t.reupload : t.upload}
           <input type="file" accept="image/png,image/jpeg,image/webp" capture="environment" className="sr-only"
             onChange={(e) => e.target.files?.[0] && onUpload(spec.type, e.target.files[0])} />
         </label>
