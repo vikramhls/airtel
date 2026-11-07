@@ -62,29 +62,44 @@ The UI is mobile-first (360 px baseline) with a dark, red-accent theme.
 ## Architecture
 
 ```mermaid
-flowchart LR
-  subgraph UI["React + Vite + Tailwind (mobile-first)"]
-    A[Advisor] --> P[Plan] --> Q[Quote] --> K[Consent + Smart KYC] --> T[Tracker]
-    C[Partner cockpit]
-  end
-  subgraph API["FastAPI"]
-    ADV[Advisor<br/>rules first, LLM fallback]
-    ENG[Rules engine<br/>eligibility · ladder · pricing · unlock paths]
-    KYC[Smart KYC<br/>preprocess → OCR → extract → validate → score]
-    ORD[Orders + tracker]
-    LI[Lead intelligence<br/>trained models · simulator · analytics]
-  end
-  LLM[(Gemini → OpenRouter<br/>language only)]
-  CSV[(CSV data pack<br/>catalogue · leads · GSTIN · Udyam)]
-  DB[(SQLite)]
-  ML[(models/*.joblib)]
-  A --> ADV --> ENG --> CSV
-  ADV <-. masked text .-> LLM
-  K --> KYC --> CSV
-  Q --> ENG
-  T --> ORD --> DB
-  C --> LI --> ML
-  LI --> CSV
+
+flowchart TD
+    subgraph UI["React + Vite + Tailwind CSS"]
+        A["AI Business Advisor"]
+        P["Product Recommendations"]
+        Q["Quotation and Checkout"]
+        K["Smart KYC"]
+        T["Order Tracker"]
+        C["Partner Dashboard"]
+        A --> P --> Q --> K --> T
+    end
+
+    subgraph API["FastAPI Backend"]
+        ADV["Advisor - Rules First, LLM Fallback"]
+        ENG["Recommendation Engine - Eligibility and Pricing"]
+        KYC["KYC Pipeline - OCR, Extraction, Validation"]
+        ORD["Order Management and Tracking"]
+        LI["Lead Intelligence and Analytics"]
+    end
+
+    LLM["Gemini via OpenRouter - Language Only"]
+    CSV["CSV Dataset - Catalogue, Leads, GSTIN, Udyam"]
+    DB["SQLite Database"]
+    ML["Scikit-learn Models"]
+
+    A --> ADV
+    ADV --> ENG
+    ADV --> LLM
+    ENG --> CSV
+    Q --> ENG
+    K --> KYC
+    KYC --> CSV
+    T --> ORD
+    ORD --> DB
+    C --> LI
+    LI --> ML
+    ML --> CSV
+
 ```
 
 **Stack:** Python 3.11+ · FastAPI · Pydantic v2 · SQLite · pandas · scikit-learn · RapidOCR (ONNX) + OpenCV/Pillow ·
